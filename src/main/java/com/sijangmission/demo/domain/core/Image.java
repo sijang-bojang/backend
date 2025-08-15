@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.core;
 
 import jakarta.persistence.*;
 import lombok.Getter;

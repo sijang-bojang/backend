@@ -1,6 +1,6 @@
 package com.sijangmission.demo.service;
 
-import com.sijangmission.demo.domain.Spot;
+import com.sijangmission.demo.domain.core.Spot;
 import com.sijangmission.demo.repository.SpotRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

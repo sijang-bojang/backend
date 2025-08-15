@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.core;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,5 +27,5 @@ public class Type {
     
     // Many-to-Many relationship with Spot through SpotType
     @OneToMany(mappedBy = "type", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SpotType> spotTypes = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.SpotType> spotTypes = new ArrayList<>();
 }

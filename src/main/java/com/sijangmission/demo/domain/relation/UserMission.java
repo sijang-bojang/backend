@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.relation;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,27 +9,25 @@ import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_course_progress")
+@Table(name = "user_mission")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCourseProgress {
+public class UserMission {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_mission_id")
+    private Long userMissionId;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private com.sijangmission.demo.domain.core.User user;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
-    
-    @Column(name = "current_step")
-    private Integer currentStep;
+    @JoinColumn(name = "mission_id")
+    private com.sijangmission.demo.domain.core.Mission mission;
     
     @Column(name = "status")
     private String status;

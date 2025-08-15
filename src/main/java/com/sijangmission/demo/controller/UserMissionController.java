@@ -1,6 +1,6 @@
 package com.sijangmission.demo.controller;
 
-import com.sijangmission.demo.domain.UserMission;
+import com.sijangmission.demo.domain.relation.UserMission;
 import com.sijangmission.demo.service.UserMissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

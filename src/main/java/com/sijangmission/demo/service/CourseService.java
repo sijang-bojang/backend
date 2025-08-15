@@ -1,6 +1,6 @@
 package com.sijangmission.demo.service;
 
-import com.sijangmission.demo.domain.Course;
+import com.sijangmission.demo.domain.core.Course;
 import com.sijangmission.demo.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

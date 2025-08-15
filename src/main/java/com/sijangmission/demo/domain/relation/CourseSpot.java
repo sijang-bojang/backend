@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.relation;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,22 +7,25 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "spot_mission")
+@Table(name = "course_spots")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpotMission {
+public class CourseSpot {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "spot_id")
-    private Spot spot;
+    @JoinColumn(name = "course_id")
+    private com.sijangmission.demo.domain.core.Course course;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mission_id")
-    private Mission mission;
+    @JoinColumn(name = "spot_id")
+    private com.sijangmission.demo.domain.core.Spot spot;
+    
+    @Column(name = "step_number")
+    private Integer stepNumber;
 }

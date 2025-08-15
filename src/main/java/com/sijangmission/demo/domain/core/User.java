@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.core;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -39,9 +39,9 @@ public class User {
     
     // Many-to-Many relationship with Mission through UserMission
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UserMission> userMissions = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.UserMission> userMissions = new ArrayList<>();
     
     // Many-to-Many relationship with Course through UserCourseProgress
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UserCourseProgress> userCourseProgresses = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.UserCourseProgress> userCourseProgresses = new ArrayList<>();
 }

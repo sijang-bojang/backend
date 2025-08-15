@@ -1,6 +1,6 @@
 package com.sijangmission.demo.repository;
 
-import com.sijangmission.demo.domain.UserCourseProgress;
+import com.sijangmission.demo.domain.relation.UserCourseProgress;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

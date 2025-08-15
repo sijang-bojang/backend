@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.core;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -34,13 +34,13 @@ public class Course {
     
     // Many-to-Many relationship with Spot through CourseSpot
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CourseSpot> courseSpots = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.CourseSpot> courseSpots = new ArrayList<>();
     
     // Many-to-Many relationship with Type through SpotType
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SpotType> spotTypes = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.SpotType> spotTypes = new ArrayList<>();
     
     // One-to-Many relationship with UserCourseProgress
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UserCourseProgress> userCourseProgresses = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.UserCourseProgress> userCourseProgresses = new ArrayList<>();
 }

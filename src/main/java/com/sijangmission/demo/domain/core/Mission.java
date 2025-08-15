@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.core;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,9 +36,9 @@ public class Mission {
     
     // Many-to-Many relationship with Spot through SpotMission
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SpotMission> spotMissions = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.SpotMission> spotMissions = new ArrayList<>();
     
     // Many-to-Many relationship with User through UserMission
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UserMission> userMissions = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.UserMission> userMissions = new ArrayList<>();
 }

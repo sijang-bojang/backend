@@ -1,6 +1,6 @@
 package com.sijangmission.demo.service;
 
-import com.sijangmission.demo.domain.UserCourseProgress;
+import com.sijangmission.demo.domain.relation.UserCourseProgress;
 import com.sijangmission.demo.repository.UserCourseProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

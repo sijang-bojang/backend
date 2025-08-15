@@ -1,6 +1,6 @@
 package com.sijangmission.demo.repository;
 
-import com.sijangmission.demo.domain.UserMission;
+import com.sijangmission.demo.domain.relation.UserMission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

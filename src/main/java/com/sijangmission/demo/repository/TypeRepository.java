@@ -1,6 +1,6 @@
 package com.sijangmission.demo.repository;
 
-import com.sijangmission.demo.domain.Type;
+import com.sijangmission.demo.domain.core.Type;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

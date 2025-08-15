@@ -6,7 +6,9 @@ JPA 기반의 Spring Boot 애플리케이션으로, 시장 탐방과 미션 수�
 
 ```
 src/main/java/com/sijangmission/demo/
-├── domain/          # JPA 엔티티 (12개)
+├── domain/          # JPA 엔티티
+│   ├── core/        # 핵심 엔티티 (7개)
+│   └── relation/    # 연결 엔티티 (5개)
 ├── repository/      # 데이터 접근 계층 (9개)
 ├── service/         # 비즈니스 로직 계층 (7개)
 ├── controller/      # REST API 계층 (7개)
@@ -16,8 +18,8 @@ src/main/java/com/sijangmission/demo/
 ## 🏗️ 생성된 프로젝트 구조 요약
 
 ### 📦 Domain 패키지 (12개 엔티티)
-- **핵심 엔티티**: `Market`, `Course`, `Spot`, `Image`, `Type`, `Mission`, `User`
-- **연결 엔티티**: `CourseSpot`, `SpotType`, `SpotMission`, `UserMission`, `UserCourseProgress`
+- **core/**: 핵심 엔티티 (7개) - `Market`, `Course`, `Spot`, `Image`, `Type`, `Mission`, `User`
+- **relation/**: 연결 엔티티 (5개) - `CourseSpot`, `SpotType`, `SpotMission`, `UserMission`, `UserCourseProgress`
 
 ### 📦 Repository 패키지 (9개 Repository)
 - 각 도메인별 JPA Repository 인터페이스

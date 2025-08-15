@@ -1,6 +1,6 @@
 package com.sijangmission.demo.service;
 
-import com.sijangmission.demo.domain.UserMission;
+import com.sijangmission.demo.domain.relation.UserMission;
 import com.sijangmission.demo.repository.UserMissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

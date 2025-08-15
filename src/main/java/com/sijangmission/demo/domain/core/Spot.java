@@ -1,4 +1,4 @@
-package com.sijangmission.demo.domain;
+package com.sijangmission.demo.domain.core;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class Spot {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
-    private Image image;
+    private com.sijangmission.demo.domain.core.Image image;
     
     @Column(name = "latitude")
     private String latitude;
@@ -47,9 +47,9 @@ public class Spot {
     
     // Many-to-Many relationship with Course through CourseSpot
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CourseSpot> courseSpots = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.CourseSpot> courseSpots = new ArrayList<>();
     
     // Many-to-Many relationship with Mission through SpotMission
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SpotMission> spotMissions = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.SpotMission> spotMissions = new ArrayList<>();
 }

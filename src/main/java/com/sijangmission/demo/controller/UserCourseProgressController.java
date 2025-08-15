@@ -1,6 +1,6 @@
 package com.sijangmission.demo.controller;
 
-import com.sijangmission.demo.domain.UserCourseProgress;
+import com.sijangmission.demo.domain.relation.UserCourseProgress;
 import com.sijangmission.demo.service.UserCourseProgressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
