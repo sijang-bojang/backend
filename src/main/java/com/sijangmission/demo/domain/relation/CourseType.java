@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "spot_types") // 테이블 이름은 기존과 동일하게 유지
+@Table(name = "course_types") // 테이블 이름은 기존과 동일하게 유지
 @Getter
 @Setter
 @NoArgsConstructor
