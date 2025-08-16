@@ -24,8 +24,9 @@
 -- 6. Course-Spots 연결 데이터 삽입
 -- course_spots_data.sql 실행
 
--- 7. Missions 데이터 삽입 (VISIT 타입)
+-- 7. Missions 데이터 삽입 (VISIT 타입, NON_VISIT 타입)
 -- missions_data.sql 실행
+-- miision_NON_VISIT.sql 실행
 
 -- 8. Spot-Missions 연결 데이터 삽입
 -- spot_missions_data.sql 실행
@@ -41,6 +42,11 @@
 - **mission_id: 1-27** - 각 스팟별 방문 미션 (총 27개)
 - **미션 타입**: VISIT (방문 미션)
 - **보상 포인트**: 50-200점 (미션 난이도에 따라 차등)
+
+### Missions (NON_VISIT 타입 미션들)
+-- **mission_id: 28-34** - 스팟 방문과 무관한 미션 (총 6개)
+-- **미션 타입** : NON_VISIT
+- **보상 타입** : 50점으로 통일
 
 ### Courses (각 시장별 코스)
 - **대전 중앙 시장**
