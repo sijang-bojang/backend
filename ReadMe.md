@@ -19,7 +19,7 @@ src/main/java/com/sijangmission/demo/
 
 ### 📦 Domain 패키지 (12개 엔티티)
 - **core/**: 핵심 엔티티 (7개) - `Market`, `Course`, `Spot`, `Image`, `Type`, `Mission`, `User`
-- **relation/**: 연결 엔티티 (5개) - `CourseSpot`, `SpotType`, `SpotMission`, `UserMission`, `UserCourseProgress`
+- **relation/**: 연결 엔티티 (5개) - `CourseSpot`, `CourseType`, `SpotMission`, `UserMission`, `UserCourseProgress`
 
 ### 📦 Repository 패키지 (9개 Repository)
 - 각 도메인별 JPA Repository 인터페이스
@@ -43,7 +43,7 @@ src/main/java/com/sijangmission/demo/
 
 ### 2. Course (코스) - 탐방 경로
 - **Course ↔ Spot**: N:M (CourseSpot 연결 테이블)
-- **Course ↔ Type**: N:M (SpotType 연결 테이블)
+- **Course ↔ Type**: N:M (CourseType 연결 테이블) - 가족/연인 코스 분류
 - **Course ↔ User**: N:M (UserCourseProgress 연결 테이블)
 
 ### 3. Spot (스팟) - 방문 지점
@@ -70,7 +70,7 @@ src/main/java/com/sijangmission/demo/
 - `spots`: 해당 시장의 스팟 목록 (1:N)
 
 ### 🛤️ Course (코스)
-**설명**: 시장 내 탐방 경로를 정의하는 엔티티
+**설명**: 시장 내 탐방 경로를 정의하는 엔티티 (가족/연인 코스 분류 지원)
 **주요 필드**:
 - `courseId`: 코스 고유 ID (PK)
 - `market`: 소속 시장 (FK)
@@ -80,8 +80,14 @@ src/main/java/com/sijangmission/demo/
 **관계**:
 - `market`: 소속 시장 (N:1)
 - `courseSpots`: 코스에 포함된 스팟들 (N:M)
-- `spotTypes`: 코스 관련 타입들 (N:M)
+- `courseTypes`: 코스 관련 타입들 (N:M)
 - `userCourseProgresses`: 사용자별 코스 진행 상황 (N:M)
+
+**편의 메서드**:
+- `getTypes()`: 코스에 속한 타입들 조회
+- `hasType(String typeName)`: 특정 타입인지 확인
+- `isFamilyCourse()`: 가족 코스인지 확인
+- `isCoupleCourse()`: 연인 코스인지 확인
 
 ### 📍 Spot (스팟)
 **설명**: 시장 내 방문 지점 정보
@@ -110,13 +116,18 @@ src/main/java/com/sijangmission/demo/
 - `spots`: 해당 이미지를 사용하는 스팟들 (1:N)
 
 ### 🏷️ Type (타입)
-**설명**: 스팟이나 코스의 분류 타입
+**설명**: 코스의 분류 타입 (가족/연인 코스 분류)
 **주요 필드**:
 - `typeId`: 타입 고유 ID (PK)
-- `name`: 타입명
+- `name`: 타입명 ("가족이랑 가기 좋은 코스", "연인과 가기 좋은 코스")
 
 **관계**:
-- `spotTypes`: 해당 타입이 적용된 스팟들 (N:M)
+- `courseTypes`: 해당 타입이 적용된 코스들 (N:M)
+
+**편의 메서드**:
+- `getCourses()`: 타입에 속한 코스들 조회
+- `isFamilyType()`: 가족 코스 타입인지 확인
+- `isCoupleType()`: 연인 코스 타입인지 확인
 
 ### 🎯 Mission (미션)
 **설명**: 사용자가 수행할 미션 정보
@@ -154,8 +165,8 @@ src/main/java/com/sijangmission/demo/
 - `spot`: 스팟 (FK)
 - `stepNumber`: 코스 내 스팟 순서
 
-### 🏷️ SpotType
-**설명**: 스팟과 타입의 N:M 관계를 관리
+### 🏷️ CourseType
+**설명**: 코스와 타입의 N:M 관계를 관리 (가족/연인 코스 분류)
 **주요 필드**:
 - `course`: 코스 (FK)
 - `type`: 타입 (FK)
@@ -248,6 +259,17 @@ src/main/java/com/sijangmission/demo/
 - **Language**: Java
 - **Lombok**: 코드 간소화
 
+## 📊 데이터 구조
+
+### 코스 분류 시스템
+- **가족이랑 가기 좋은 코스**: 가족 단위로 즐기기 좋은 코스
+- **연인과 가기 좋은 코스**: 연인과 함께하기 좋은 로맨틱한 코스
+
+### 시장별 코스 구성
+- **대전 중앙 시장**: 맛집 탐방 코스 (가족), 문화 체험 코스 (연인)
+- **대전 문창 시장**: 떡 맛집 코스 (가족), 야구 관람 코스 (가족)
+- **대전 역전 시장**: 로컬 맛집 코스 (가족), 히든 스팟 코스 (연인)
+
 ## 📝 주요 특징
 
 1. **계층별 분리**: Domain, Repository, Service, Controller 계층으로 명확한 책임 분리
@@ -256,3 +278,5 @@ src/main/java/com/sijangmission/demo/
 4. **트랜잭션 관리**: Service 계층에서 `@Transactional` 어노테이션으로 트랜잭션 관리
 5. **검색 기능**: 다양한 조건으로 데이터 검색 가능
 6. **진행 상황 추적**: 사용자의 미션 및 코스 진행 상황을 상세히 추적
+7. **코스 분류 시스템**: 가족/연인 코스 분류를 통한 맞춤형 추천 기능
+8. **편의 메서드**: 코스 타입 확인 및 조회를 위한 편의 메서드 제공

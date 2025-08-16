@@ -36,9 +36,32 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<com.sijangmission.demo.domain.relation.CourseSpot> courseSpots = new ArrayList<>();
     
-    // Many-to-Many relationship with Type through SpotType
+    // Many-to-Many relationship with Type through CourseType
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<com.sijangmission.demo.domain.relation.SpotType> spotTypes = new ArrayList<>();
+    private List<com.sijangmission.demo.domain.relation.CourseType> courseTypes = new ArrayList<>();
+    
+    // 편의 메서드: 코스의 타입들 조회
+    public List<Type> getTypes() {
+        return courseTypes.stream()
+                .map(courseType -> courseType.getType())
+                .toList();
+    }
+    
+    // 편의 메서드: 특정 타입인지 확인
+    public boolean hasType(String typeName) {
+        return courseTypes.stream()
+                .anyMatch(courseType -> courseType.getType().getName().equals(typeName));
+    }
+    
+    // 편의 메서드: 가족 코스인지 확인
+    public boolean isFamilyCourse() {
+        return hasType("가족이랑 가기 좋은 코스");
+    }
+    
+    // 편의 메서드: 연인 코스인지 확인
+    public boolean isCoupleCourse() {
+        return hasType("연인과 가기 좋은 코스");
+    }
     
     // One-to-Many relationship with UserCourseProgress
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
