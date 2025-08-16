@@ -5,4 +5,5 @@ import com.sijangmission.demo.domain.UserCourseProgress.UserCourseProgressId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserCourseProgressRepository extends JpaRepository<UserCourseProgress, UserCourseProgressId> {
+
 }
