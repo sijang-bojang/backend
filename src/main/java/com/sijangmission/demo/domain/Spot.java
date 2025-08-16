@@ -11,26 +11,30 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "courses")
-public class Course {
+@Table(name = "spots")
+public class Spot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "course_id")
+    @Column(name = "spot_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "market_id")
     private Market market;
 
-    private String name;
-    private String description;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
-    @OneToMany(mappedBy = "course")
+    private String name;
+    private String category;
+    private String description;
+    private Double latitude;
+    private Double longitude;
+
+    @OneToMany(mappedBy = "spot")
     private List<CourseSpot> courseSpots = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course")
-    private List<SpotType> spotTypes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "course")
-    private List<UserCourseProgress> userCourseProgresses = new ArrayList<>();
+    @OneToMany(mappedBy = "spot")
+    private List<SpotMission> spotMissions = new ArrayList<>();
 }
