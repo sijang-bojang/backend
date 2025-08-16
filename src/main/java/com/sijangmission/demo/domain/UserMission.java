@@ -1,4 +1,4 @@
-package com.sijangmission.domain;
+package com.sijangmission.demo.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "reviews")
-public class Review {
+@Table(name = "user_missions")
+public class UserMission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,13 +21,9 @@ public class Review {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "market_id")
-    private Market market;
+    @JoinColumn(name = "mission_id")
+    private Mission mission;
 
-    @Lob
-    private String content;
-
-    private String photoUrl;
-    private String inconvenience;
-    private LocalDateTime createdAt;
+    private boolean achieved;
+    private LocalDateTime achievedAt;
 }

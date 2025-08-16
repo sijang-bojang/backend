@@ -1,6 +1,6 @@
-package com.sijangmission.repository;
+package com.sijangmission.demo.repository;
 
-import com.sijangmission.domain.Review;
+import com.sijangmission.demo.domain.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {

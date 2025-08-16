@@ -1,6 +1,6 @@
-package com.sijangmission.repository;
+package com.sijangmission.demo.repository;
 
-import com.sijangmission.domain.Market;
+import com.sijangmission.demo.domain.Market;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MarketRepository extends JpaRepository<Market, Long> {

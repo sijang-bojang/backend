@@ -1,4 +1,4 @@
-package com.sijangmission.domain;
+package com.sijangmission.demo.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
