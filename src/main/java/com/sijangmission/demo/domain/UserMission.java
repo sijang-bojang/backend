@@ -10,10 +10,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user_missions")
+@Table(name = "user_mission")
 public class UserMission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_mission_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,6 +25,7 @@ public class UserMission {
     @JoinColumn(name = "mission_id")
     private Mission mission;
 
-    private boolean achieved;
-    private LocalDateTime achievedAt;
+    private String status;
+    private LocalDateTime startedAt;
+    private LocalDateTime completedAt;
 }
