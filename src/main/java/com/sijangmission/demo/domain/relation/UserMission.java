@@ -37,4 +37,26 @@ public class UserMission {
     
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
+    
+    // 편의 메서드: 미션 시작
+    public void startMission() {
+        this.status = "IN_PROGRESS";
+        this.startedAt = LocalDateTime.now();
+    }
+    
+    // 편의 메서드: 미션 완료
+    public void completeMission() {
+        this.status = "COMPLETED";
+        this.completedAt = LocalDateTime.now();
+    }
+    
+    // 편의 메서드: 진행 중인지 확인
+    public boolean isInProgress() {
+        return "IN_PROGRESS".equals(this.status);
+    }
+    
+    // 편의 메서드: 완료되었는지 확인
+    public boolean isCompleted() {
+        return "COMPLETED".equals(this.status);
+    }
 }

@@ -44,4 +44,28 @@ public class User {
     // Many-to-Many relationship with Course through UserCourseProgress
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<com.sijangmission.demo.domain.relation.UserCourseProgress> userCourseProgresses = new ArrayList<>();
+    
+    // 편의 메서드: 사용자의 미션들 조회
+    public List<Mission> getMissions() {
+        return userMissions.stream()
+                .map(userMission -> userMission.getMission())
+                .toList();
+    }
+    
+    // 편의 메서드: 사용자의 코스들 조회
+    public List<Course> getCourses() {
+        return userCourseProgresses.stream()
+                .map(userCourseProgress -> userCourseProgress.getCourse())
+                .toList();
+    }
+    
+    // 편의 메서드: 보상 포인트 추가
+    public void addRewardPoints(Integer points) {
+        this.totalReward += points;
+    }
+    
+    // 편의 메서드: 경험치 추가
+    public void addExperience(Integer exp) {
+        this.exp += exp;
+    }
 }

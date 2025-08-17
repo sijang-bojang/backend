@@ -41,4 +41,21 @@ public class Mission {
     // Many-to-Many relationship with User through UserMission
     @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<com.sijangmission.demo.domain.relation.UserMission> userMissions = new ArrayList<>();
+    
+    // 편의 메서드: 미션의 스팟들 조회
+    public List<Spot> getSpots() {
+        return spotMissions.stream()
+                .map(spotMission -> spotMission.getSpot())
+                .toList();
+    }
+    
+    // 편의 메서드: VISIT 타입인지 확인
+    public boolean isVisitType() {
+        return "VISIT".equals(this.missionType);
+    }
+    
+    // 편의 메서드: NON_VISIT 타입인지 확인
+    public boolean isNonVisitType() {
+        return "NON_VISIT".equals(this.missionType);
+    }
 }

@@ -40,10 +40,10 @@ public class Spot {
     private com.sijangmission.demo.domain.core.Image image;
     
     @Column(name = "latitude")
-    private String latitude;
+    private Double latitude;
     
     @Column(name = "longitude")
-    private String longitude;
+    private Double longitude;
     
     // Many-to-Many relationship with Course through CourseSpot
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -52,4 +52,33 @@ public class Spot {
     // Many-to-Many relationship with Mission through SpotMission
     @OneToMany(mappedBy = "spot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<com.sijangmission.demo.domain.relation.SpotMission> spotMissions = new ArrayList<>();
+    
+    // 편의 메서드: 스팟의 미션들 조회
+    public List<Mission> getMissions() {
+        return spotMissions.stream()
+                .map(spotMission -> spotMission.getMission())
+                .toList();
+    }
+    
+    // 편의 메서드: 스팟의 코스들 조회
+    public List<Course> getCourses() {
+        return courseSpots.stream()
+                .map(courseSpot -> courseSpot.getCourse())
+                .toList();
+    }
+    
+    // 편의 메서드: 식당 카테고리인지 확인
+    public boolean isRestaurant() {
+        return "식당".equals(this.category);
+    }
+    
+    // 편의 메서드: 카페 카테고리인지 확인
+    public boolean isCafe() {
+        return "카페".equals(this.category);
+    }
+    
+    // 편의 메서드: 즐길거리 카테고리인지 확인
+    public boolean isAttraction() {
+        return "즐길거리".equals(this.category);
+    }
 }

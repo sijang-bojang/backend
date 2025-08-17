@@ -1,6 +1,8 @@
 package com.sijangmission.demo.service;
 
 import com.sijangmission.demo.domain.core.Market;
+import com.sijangmission.demo.dto.MarketDto;
+import com.sijangmission.demo.mapper.MarketMapper;
 import com.sijangmission.demo.repository.MarketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,26 +17,38 @@ import java.util.Optional;
 public class MarketService {
     
     private final MarketRepository marketRepository;
+    private final MarketMapper marketMapper;
     
-    public List<Market> getAllMarkets() {
-        return marketRepository.findAll();
+    public List<MarketDto> getAllMarkets() {
+        List<Market> markets = marketRepository.findAll();
+        return markets.stream()
+                .map(marketMapper::toDto)
+                .toList();
     }
     
-    public Optional<Market> getMarketById(Long marketId) {
-        return marketRepository.findById(marketId);
+    public Optional<MarketDto> getMarketById(Long marketId) {
+        Optional<Market> market = marketRepository.findById(marketId);
+        return market.map(marketMapper::toDto);
     }
     
-    public List<Market> getMarketsByName(String name) {
-        return marketRepository.findByNameContaining(name);
+    public List<MarketDto> getMarketsByName(String name) {
+        List<Market> markets = marketRepository.findByNameContaining(name);
+        return markets.stream()
+                .map(marketMapper::toDto)
+                .toList();
     }
     
-    public List<Market> getMarketsByAddress(String address) {
-        return marketRepository.findByAddressContaining(address);
+    public List<MarketDto> getMarketsByAddress(String address) {
+        List<Market> markets = marketRepository.findByAddressContaining(address);
+        return markets.stream()
+                .map(marketMapper::toDto)
+                .toList();
     }
     
     @Transactional
-    public Market saveMarket(Market market) {
-        return marketRepository.save(market);
+    public MarketDto saveMarket(Market market) {
+        Market savedMarket = marketRepository.save(market);
+        return marketMapper.toDto(savedMarket);
     }
     
     @Transactional

@@ -9,6 +9,8 @@ src/main/java/com/sijangmission/demo/
 ├── domain/          # JPA 엔티티
 │   ├── core/        # 핵심 엔티티 (7개)
 │   └── relation/    # 연결 엔티티 (5개)
+├── dto/             # 데이터 전송 객체 (8개)
+├── mapper/          # 엔티티-DTO 변환 매퍼 (5개)
 ├── repository/      # 데이터 접근 계층 (9개)
 ├── service/         # 비즈니스 로직 계층 (7개)
 ├── controller/      # REST API 계층 (7개)
@@ -25,14 +27,31 @@ src/main/java/com/sijangmission/demo/
 - 각 도메인별 JPA Repository 인터페이스
 - Spring Data JPA의 기본 CRUD 메서드 + 커스텀 쿼리 메서드
 
+### 📦 DTO 패키지 (8개 DTO)
+- **MarketDto**: 시장 정보 (코스 수, 스팟 수 포함)
+- **SpotDto**: 스팟 정보 (시장명, 미션 수, 코스명들 포함)
+- **CourseDto**: 코스 정보 (시장명, 타입명들, 스팟들, 가족/연인 코스 여부 포함)
+- **CourseSpotDto**: 코스-스팟 연결 정보 (순서 포함)
+- **MissionDto**: 미션 정보 (스팟명들, VISIT/NON_VISIT 여부 포함)
+- **UserDto**: 사용자 정보 (완료한 미션/코스 수 포함)
+- **UserMissionDto**: 사용자 미션 진행 상황
+- **UserCourseProgressDto**: 사용자 코스 진행 상황
+
+### 📦 Mapper 패키지 (5개 Mapper)
+- 엔티티를 DTO로 변환하는 매퍼 클래스들
+- 순환 참조 문제 해결
+- API 응답 구조 최적화
+
 ### 📦 Service 패키지 (7개 Service)
 - 비즈니스 로직 처리
 - `@Transactional` 어노테이션으로 트랜잭션 관리
+- 엔티티를 DTO로 변환하여 반환
 - 사용자 미션 시작/완료, 코스 진행 등 특별한 비즈니스 로직 포함
 
 ### 📦 Controller 패키지 (7개 Controller)
 - RESTful API 엔드포인트 제공
 - HTTP 메서드별 CRUD 작업 지원
+- DTO만 응답으로 반환 (순환 참조 방지)
 - 검색 기능 포함
 
 ## 🔗 주요 매핑 관계
@@ -200,55 +219,55 @@ src/main/java/com/sijangmission/demo/
 ## 🚀 API 엔드포인트
 
 ### Markets
-- `GET /api/markets` - 모든 시장 조회
-- `GET /api/markets/{marketId}` - 특정 시장 조회
-- `GET /api/markets/search` - 시장 검색
-- `POST /api/markets` - 시장 생성
-- `PUT /api/markets/{marketId}` - 시장 수정
+- `GET /api/markets` - 모든 시장 조회 (MarketDto 반환)
+- `GET /api/markets/{marketId}` - 특정 시장 조회 (MarketDto 반환)
+- `GET /api/markets/search` - 시장 검색 (MarketDto 리스트 반환)
+- `POST /api/markets` - 시장 생성 (MarketDto 반환)
+- `PUT /api/markets/{marketId}` - 시장 수정 (MarketDto 반환)
 - `DELETE /api/markets/{marketId}` - 시장 삭제
 
 ### Courses
-- `GET /api/courses` - 모든 코스 조회
-- `GET /api/courses/{courseId}` - 특정 코스 조회
-- `GET /api/courses/market/{marketId}` - 시장별 코스 조회
-- `GET /api/courses/search` - 코스 검색
-- `POST /api/courses` - 코스 생성
-- `PUT /api/courses/{courseId}` - 코스 수정
+- `GET /api/courses` - 모든 코스 조회 (CourseDto 반환)
+- `GET /api/courses/{courseId}` - 특정 코스 조회 (CourseDto 반환)
+- `GET /api/courses/market/{marketId}` - 시장별 코스 조회 (CourseDto 리스트 반환)
+- `GET /api/courses/search` - 코스 검색 (CourseDto 리스트 반환)
+- `POST /api/courses` - 코스 생성 (CourseDto 반환)
+- `PUT /api/courses/{courseId}` - 코스 수정 (CourseDto 반환)
 - `DELETE /api/courses/{courseId}` - 코스 삭제
 
 ### Users
-- `GET /api/users` - 모든 사용자 조회
-- `GET /api/users/{userId}` - 특정 사용자 조회
-- `GET /api/users/username/{username}` - 사용자명으로 조회
-- `GET /api/users/email/{email}` - 이메일로 조회
-- `POST /api/users` - 사용자 생성
-- `PUT /api/users/{userId}` - 사용자 수정
-- `PUT /api/users/{userId}/reward` - 보상 포인트 업데이트
-- `PUT /api/users/{userId}/exp` - 경험치 업데이트
+- `GET /api/users` - 모든 사용자 조회 (UserDto 반환)
+- `GET /api/users/{userId}` - 특정 사용자 조회 (UserDto 반환)
+- `GET /api/users/username/{username}` - 사용자명으로 조회 (UserDto 반환)
+- `GET /api/users/email/{email}` - 이메일로 조회 (UserDto 반환)
+- `POST /api/users` - 사용자 생성 (UserDto 반환)
+- `PUT /api/users/{userId}` - 사용자 수정 (UserDto 반환)
+- `PUT /api/users/{userId}/reward` - 보상 포인트 업데이트 (UserDto 반환)
+- `PUT /api/users/{userId}/exp` - 경험치 업데이트 (UserDto 반환)
 - `DELETE /api/users/{userId}` - 사용자 삭제
 
 ### Missions
-- `GET /api/missions` - 모든 미션 조회
-- `GET /api/missions/{missionId}` - 특정 미션 조회
-- `GET /api/missions/type/{missionType}` - 타입별 미션 조회
-- `GET /api/missions/search` - 미션 검색
-- `POST /api/missions` - 미션 생성
-- `PUT /api/missions/{missionId}` - 미션 수정
+- `GET /api/missions` - 모든 미션 조회 (MissionDto 반환)
+- `GET /api/missions/{missionId}` - 특정 미션 조회 (MissionDto 반환)
+- `GET /api/missions/type/{missionType}` - 타입별 미션 조회 (MissionDto 리스트 반환)
+- `GET /api/missions/search` - 미션 검색 (MissionDto 리스트 반환)
+- `POST /api/missions` - 미션 생성 (MissionDto 반환)
+- `PUT /api/missions/{missionId}` - 미션 수정 (MissionDto 반환)
 - `DELETE /api/missions/{missionId}` - 미션 삭제
 
 ### User Missions
-- `GET /api/user-missions` - 모든 사용자 미션 조회
-- `GET /api/user-missions/user/{userId}` - 사용자별 미션 조회
-- `GET /api/user-missions/user/{userId}/status/{status}` - 상태별 미션 조회
-- `POST /api/user-missions/start` - 미션 시작
-- `POST /api/user-missions/complete` - 미션 완료
+- `GET /api/user-missions` - 모든 사용자 미션 조회 (UserMissionDto 반환)
+- `GET /api/user-missions/user/{userId}` - 사용자별 미션 조회 (UserMissionDto 리스트 반환)
+- `GET /api/user-missions/user/{userId}/status/{status}` - 상태별 미션 조회 (UserMissionDto 리스트 반환)
+- `POST /api/user-missions/start` - 미션 시작 (UserMissionDto 반환)
+- `POST /api/user-missions/complete` - 미션 완료 (UserMissionDto 반환)
 
 ### User Course Progress
-- `GET /api/user-course-progress` - 모든 코스 진행 상황 조회
-- `GET /api/user-course-progress/user/{userId}` - 사용자별 코스 진행 상황
-- `POST /api/user-course-progress/start` - 코스 시작
-- `PUT /api/user-course-progress/progress` - 코스 진행 단계 업데이트
-- `POST /api/user-course-progress/complete` - 코스 완료
+- `GET /api/user-course-progress` - 모든 코스 진행 상황 조회 (UserCourseProgressDto 반환)
+- `GET /api/user-course-progress/user/{userId}` - 사용자별 코스 진행 상황 (UserCourseProgressDto 리스트 반환)
+- `POST /api/user-course-progress/start` - 코스 시작 (UserCourseProgressDto 반환)
+- `PUT /api/user-course-progress/progress` - 코스 진행 단계 업데이트 (UserCourseProgressDto 반환)
+- `POST /api/user-course-progress/complete` - 코스 완료 (UserCourseProgressDto 반환)
 
 ## 🛠️ 기술 스택
 
@@ -258,6 +277,7 @@ src/main/java/com/sijangmission/demo/
 - **Build Tool**: Gradle
 - **Language**: Java
 - **Lombok**: 코드 간소화
+- **Architecture**: DTO 패턴, 계층형 아키텍처
 
 ## 📊 데이터 구조
 
@@ -270,13 +290,32 @@ src/main/java/com/sijangmission/demo/
 - **대전 문창 시장**: 떡 맛집 코스 (가족), 야구 관람 코스 (가족)
 - **대전 역전 시장**: 로컬 맛집 코스 (가족), 히든 스팟 코스 (연인)
 
+## 🔄 DTO 패턴 구조
+
+### 엔티티 → DTO 변환 흐름
+```
+Controller → Service → Repository → Entity
+    ↓
+Controller ← Service ← Mapper ← Entity
+    ↓
+Controller → Client (DTO 반환)
+```
+
+### 주요 DTO 특징
+- **순환 참조 방지**: 엔티티 간 순환 참조 문제 해결
+- **API 최적화**: 필요한 데이터만 전송
+- **유지보수성**: 엔티티 변경이 API에 직접 영향 없음
+- **명확한 계약**: API 응답 구조 명확화
+
 ## 📝 주요 특징
 
 1. **계층별 분리**: Domain, Repository, Service, Controller 계층으로 명확한 책임 분리
 2. **JPA 매핑**: ERD 기반의 정확한 엔티티 관계 매핑
-3. **RESTful API**: 표준 HTTP 메서드를 활용한 REST API 설계
-4. **트랜잭션 관리**: Service 계층에서 `@Transactional` 어노테이션으로 트랜잭션 관리
-5. **검색 기능**: 다양한 조건으로 데이터 검색 가능
-6. **진행 상황 추적**: 사용자의 미션 및 코스 진행 상황을 상세히 추적
-7. **코스 분류 시스템**: 가족/연인 코스 분류를 통한 맞춤형 추천 기능
-8. **편의 메서드**: 코스 타입 확인 및 조회를 위한 편의 메서드 제공
+3. **DTO 패턴**: 엔티티와 API 응답을 분리하여 순환 참조 문제 해결
+4. **RESTful API**: 표준 HTTP 메서드를 활용한 REST API 설계
+5. **트랜잭션 관리**: Service 계층에서 `@Transactional` 어노테이션으로 트랜잭션 관리
+6. **검색 기능**: 다양한 조건으로 데이터 검색 가능
+7. **진행 상황 추적**: 사용자의 미션 및 코스 진행 상황을 상세히 추적
+8. **코스 분류 시스템**: 가족/연인 코스 분류를 통한 맞춤형 추천 기능
+9. **편의 메서드**: 코스 타입 확인 및 조회를 위한 편의 메서드 제공
+10. **매퍼 패턴**: 엔티티-DTO 변환을 위한 전용 매퍼 클래스 제공

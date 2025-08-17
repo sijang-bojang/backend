@@ -1,6 +1,7 @@
 package com.sijangmission.demo.controller;
 
 import com.sijangmission.demo.domain.core.Market;
+import com.sijangmission.demo.dto.MarketDto;
 import com.sijangmission.demo.service.MarketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +18,20 @@ public class MarketController {
     private final MarketService marketService;
     
     @GetMapping
-    public ResponseEntity<List<Market>> getAllMarkets() {
-        List<Market> markets = marketService.getAllMarkets();
+    public ResponseEntity<List<MarketDto>> getAllMarkets() {
+        List<MarketDto> markets = marketService.getAllMarkets();
         return ResponseEntity.ok(markets);
     }
     
     @GetMapping("/{marketId}")
-    public ResponseEntity<Market> getMarketById(@PathVariable Long marketId) {
-        Optional<Market> market = marketService.getMarketById(marketId);
+    public ResponseEntity<MarketDto> getMarketById(@PathVariable Long marketId) {
+        Optional<MarketDto> market = marketService.getMarketById(marketId);
         return market.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/search")
-    public ResponseEntity<List<Market>> searchMarkets(
+    public ResponseEntity<List<MarketDto>> searchMarkets(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String address) {
         
@@ -44,17 +45,17 @@ public class MarketController {
     }
     
     @PostMapping
-    public ResponseEntity<Market> createMarket(@RequestBody Market market) {
-        Market savedMarket = marketService.saveMarket(market);
+    public ResponseEntity<MarketDto> createMarket(@RequestBody Market market) {
+        MarketDto savedMarket = marketService.saveMarket(market);
         return ResponseEntity.ok(savedMarket);
     }
     
     @PutMapping("/{marketId}")
-    public ResponseEntity<Market> updateMarket(@PathVariable Long marketId, @RequestBody Market market) {
-        Optional<Market> existingMarket = marketService.getMarketById(marketId);
+    public ResponseEntity<MarketDto> updateMarket(@PathVariable Long marketId, @RequestBody Market market) {
+        Optional<MarketDto> existingMarket = marketService.getMarketById(marketId);
         if (existingMarket.isPresent()) {
             market.setMarketId(marketId);
-            Market updatedMarket = marketService.saveMarket(market);
+            MarketDto updatedMarket = marketService.saveMarket(market);
             return ResponseEntity.ok(updatedMarket);
         } else {
             return ResponseEntity.notFound().build();
@@ -63,7 +64,7 @@ public class MarketController {
     
     @DeleteMapping("/{marketId}")
     public ResponseEntity<Void> deleteMarket(@PathVariable Long marketId) {
-        Optional<Market> market = marketService.getMarketById(marketId);
+        Optional<MarketDto> market = marketService.getMarketById(marketId);
         if (market.isPresent()) {
             marketService.deleteMarket(marketId);
             return ResponseEntity.ok().build();
