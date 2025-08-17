@@ -1,6 +1,7 @@
 package com.sijangmission.demo.controller;
 
 import com.sijangmission.demo.domain.core.Course;
+import com.sijangmission.demo.dto.CourseDto;
 import com.sijangmission.demo.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,26 +18,26 @@ public class CourseController {
     private final CourseService courseService;
     
     @GetMapping
-    public ResponseEntity<List<Course>> getAllCourses() {
-        List<Course> courses = courseService.getAllCourses();
+    public ResponseEntity<List<CourseDto>> getAllCourses() {
+        List<CourseDto> courses = courseService.getAllCourses();
         return ResponseEntity.ok(courses);
     }
     
     @GetMapping("/{courseId}")
-    public ResponseEntity<Course> getCourseById(@PathVariable Long courseId) {
-        Optional<Course> course = courseService.getCourseById(courseId);
+    public ResponseEntity<CourseDto> getCourseById(@PathVariable Long courseId) {
+        Optional<CourseDto> course = courseService.getCourseById(courseId);
         return course.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/market/{marketId}")
-    public ResponseEntity<List<Course>> getCoursesByMarketId(@PathVariable Long marketId) {
-        List<Course> courses = courseService.getCoursesByMarketId(marketId);
+    public ResponseEntity<List<CourseDto>> getCoursesByMarketId(@PathVariable Long marketId) {
+        List<CourseDto> courses = courseService.getCoursesByMarketId(marketId);
         return ResponseEntity.ok(courses);
     }
     
     @GetMapping("/search")
-    public ResponseEntity<List<Course>> searchCourses(
+    public ResponseEntity<List<CourseDto>> searchCourses(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String description) {
         
@@ -50,17 +51,17 @@ public class CourseController {
     }
     
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody Course course) {
-        Course savedCourse = courseService.saveCourse(course);
+    public ResponseEntity<CourseDto> createCourse(@RequestBody Course course) {
+        CourseDto savedCourse = courseService.saveCourse(course);
         return ResponseEntity.ok(savedCourse);
     }
     
     @PutMapping("/{courseId}")
-    public ResponseEntity<Course> updateCourse(@PathVariable Long courseId, @RequestBody Course course) {
-        Optional<Course> existingCourse = courseService.getCourseById(courseId);
+    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long courseId, @RequestBody Course course) {
+        Optional<CourseDto> existingCourse = courseService.getCourseById(courseId);
         if (existingCourse.isPresent()) {
             course.setCourseId(courseId);
-            Course updatedCourse = courseService.saveCourse(course);
+            CourseDto updatedCourse = courseService.saveCourse(course);
             return ResponseEntity.ok(updatedCourse);
         } else {
             return ResponseEntity.notFound().build();
@@ -69,7 +70,7 @@ public class CourseController {
     
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long courseId) {
-        Optional<Course> course = courseService.getCourseById(courseId);
+        Optional<CourseDto> course = courseService.getCourseById(courseId);
         if (course.isPresent()) {
             courseService.deleteCourse(courseId);
             return ResponseEntity.ok().build();

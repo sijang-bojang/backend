@@ -1,6 +1,7 @@
 package com.sijangmission.demo.controller;
 
 import com.sijangmission.demo.domain.core.User;
+import com.sijangmission.demo.dto.UserDto;
 import com.sijangmission.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,34 +18,34 @@ public class UserController {
     private final UserService userService;
     
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        List<UserDto> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
     
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
-        Optional<User> user = userService.getUserById(userId);
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
+        Optional<UserDto> user = userService.getUserById(userId);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        Optional<User> user = userService.getUserByUsername(username);
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable String username) {
+        Optional<UserDto> user = userService.getUserByUsername(username);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        Optional<User> user = userService.getUserByEmail(email);
+    public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
+        Optional<UserDto> user = userService.getUserByEmail(email);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserDto> createUser(@RequestBody User user) {
         // Check if username or email already exists
         if (userService.existsByUsername(user.getUsername())) {
             return ResponseEntity.badRequest().build();
@@ -53,16 +54,16 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         
-        User savedUser = userService.saveUser(user);
+        UserDto savedUser = userService.saveUser(user);
         return ResponseEntity.ok(savedUser);
     }
     
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User user) {
-        Optional<User> existingUser = userService.getUserById(userId);
+    public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody User user) {
+        Optional<UserDto> existingUser = userService.getUserById(userId);
         if (existingUser.isPresent()) {
             user.setUserId(userId);
-            User updatedUser = userService.saveUser(user);
+            UserDto updatedUser = userService.saveUser(user);
             return ResponseEntity.ok(updatedUser);
         } else {
             return ResponseEntity.notFound().build();
@@ -70,9 +71,9 @@ public class UserController {
     }
     
     @PutMapping("/{userId}/reward")
-    public ResponseEntity<User> updateUserReward(@PathVariable Long userId, @RequestParam Integer rewardPoints) {
+    public ResponseEntity<UserDto> updateUserReward(@PathVariable Long userId, @RequestParam Integer rewardPoints) {
         try {
-            User updatedUser = userService.updateUserReward(userId, rewardPoints);
+            UserDto updatedUser = userService.updateUserReward(userId, rewardPoints);
             return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -80,9 +81,9 @@ public class UserController {
     }
     
     @PutMapping("/{userId}/exp")
-    public ResponseEntity<User> updateUserExp(@PathVariable Long userId, @RequestParam Integer exp) {
+    public ResponseEntity<UserDto> updateUserExp(@PathVariable Long userId, @RequestParam Integer exp) {
         try {
-            User updatedUser = userService.updateUserExp(userId, exp);
+            UserDto updatedUser = userService.updateUserExp(userId, exp);
             return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -91,7 +92,7 @@ public class UserController {
     
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        Optional<User> user = userService.getUserById(userId);
+        Optional<UserDto> user = userService.getUserById(userId);
         if (user.isPresent()) {
             userService.deleteUser(userId);
             return ResponseEntity.ok().build();

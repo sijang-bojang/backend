@@ -1,6 +1,7 @@
 package com.sijangmission.demo.controller;
 
 import com.sijangmission.demo.domain.core.Mission;
+import com.sijangmission.demo.dto.MissionDto;
 import com.sijangmission.demo.service.MissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,26 +18,26 @@ public class MissionController {
     private final MissionService missionService;
     
     @GetMapping
-    public ResponseEntity<List<Mission>> getAllMissions() {
-        List<Mission> missions = missionService.getAllMissions();
+    public ResponseEntity<List<MissionDto>> getAllMissions() {
+        List<MissionDto> missions = missionService.getAllMissions();
         return ResponseEntity.ok(missions);
     }
     
     @GetMapping("/{missionId}")
-    public ResponseEntity<Mission> getMissionById(@PathVariable Long missionId) {
-        Optional<Mission> mission = missionService.getMissionById(missionId);
+    public ResponseEntity<MissionDto> getMissionById(@PathVariable Long missionId) {
+        Optional<MissionDto> mission = missionService.getMissionById(missionId);
         return mission.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/type/{missionType}")
-    public ResponseEntity<List<Mission>> getMissionsByType(@PathVariable String missionType) {
-        List<Mission> missions = missionService.getMissionsByType(missionType);
+    public ResponseEntity<List<MissionDto>> getMissionsByType(@PathVariable String missionType) {
+        List<MissionDto> missions = missionService.getMissionsByType(missionType);
         return ResponseEntity.ok(missions);
     }
     
     @GetMapping("/search")
-    public ResponseEntity<List<Mission>> searchMissions(
+    public ResponseEntity<List<MissionDto>> searchMissions(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Integer minRewardPoints) {
         
@@ -50,17 +51,17 @@ public class MissionController {
     }
     
     @PostMapping
-    public ResponseEntity<Mission> createMission(@RequestBody Mission mission) {
-        Mission savedMission = missionService.saveMission(mission);
+    public ResponseEntity<MissionDto> createMission(@RequestBody Mission mission) {
+        MissionDto savedMission = missionService.saveMission(mission);
         return ResponseEntity.ok(savedMission);
     }
     
     @PutMapping("/{missionId}")
-    public ResponseEntity<Mission> updateMission(@PathVariable Long missionId, @RequestBody Mission mission) {
-        Optional<Mission> existingMission = missionService.getMissionById(missionId);
+    public ResponseEntity<MissionDto> updateMission(@PathVariable Long missionId, @RequestBody Mission mission) {
+        Optional<MissionDto> existingMission = missionService.getMissionById(missionId);
         if (existingMission.isPresent()) {
             mission.setMissionId(missionId);
-            Mission updatedMission = missionService.saveMission(mission);
+            MissionDto updatedMission = missionService.saveMission(mission);
             return ResponseEntity.ok(updatedMission);
         } else {
             return ResponseEntity.notFound().build();
@@ -69,7 +70,7 @@ public class MissionController {
     
     @DeleteMapping("/{missionId}")
     public ResponseEntity<Void> deleteMission(@PathVariable Long missionId) {
-        Optional<Mission> mission = missionService.getMissionById(missionId);
+        Optional<MissionDto> mission = missionService.getMissionById(missionId);
         if (mission.isPresent()) {
             missionService.deleteMission(missionId);
             return ResponseEntity.ok().build();

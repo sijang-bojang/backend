@@ -1,6 +1,8 @@
 package com.sijangmission.demo.service;
 
 import com.sijangmission.demo.domain.core.User;
+import com.sijangmission.demo.dto.UserDto;
+import com.sijangmission.demo.mapper.UserMapper;
 import com.sijangmission.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,21 +17,28 @@ import java.util.Optional;
 public class UserService {
     
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(userMapper::toDto)
+                .toList();
     }
     
-    public Optional<User> getUserById(Long userId) {
-        return userRepository.findById(userId);
+    public Optional<UserDto> getUserById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.map(userMapper::toDto);
     }
     
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Optional<UserDto> getUserByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.map(userMapper::toDto);
     }
     
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<UserDto> getUserByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.map(userMapper::toDto);
     }
     
     public boolean existsByUsername(String username) {
@@ -41,8 +50,9 @@ public class UserService {
     }
     
     @Transactional
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public UserDto saveUser(User user) {
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
     }
     
     @Transactional
@@ -51,23 +61,25 @@ public class UserService {
     }
     
     @Transactional
-    public User updateUserReward(Long userId, Integer rewardPoints) {
+    public UserDto updateUserReward(Long userId, Integer rewardPoints) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             user.setTotalReward(user.getTotalReward() + rewardPoints);
-            return userRepository.save(user);
+            User savedUser = userRepository.save(user);
+            return userMapper.toDto(savedUser);
         }
         throw new RuntimeException("User not found with id: " + userId);
     }
     
     @Transactional
-    public User updateUserExp(Long userId, Integer exp) {
+    public UserDto updateUserExp(Long userId, Integer exp) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             user.setExp(user.getExp() + exp);
-            return userRepository.save(user);
+            User savedUser = userRepository.save(user);
+            return userMapper.toDto(savedUser);
         }
         throw new RuntimeException("User not found with id: " + userId);
     }

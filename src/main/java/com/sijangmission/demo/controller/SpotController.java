@@ -1,6 +1,7 @@
 package com.sijangmission.demo.controller;
 
 import com.sijangmission.demo.domain.core.Spot;
+import com.sijangmission.demo.dto.SpotDto;
 import com.sijangmission.demo.service.SpotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,32 +18,32 @@ public class SpotController {
     private final SpotService spotService;
     
     @GetMapping
-    public ResponseEntity<List<Spot>> getAllSpots() {
-        List<Spot> spots = spotService.getAllSpots();
+    public ResponseEntity<List<SpotDto>> getAllSpots() {
+        List<SpotDto> spots = spotService.getAllSpots();
         return ResponseEntity.ok(spots);
     }
     
     @GetMapping("/{spotId}")
-    public ResponseEntity<Spot> getSpotById(@PathVariable Long spotId) {
-        Optional<Spot> spot = spotService.getSpotById(spotId);
+    public ResponseEntity<SpotDto> getSpotById(@PathVariable Long spotId) {
+        Optional<SpotDto> spot = spotService.getSpotById(spotId);
         return spot.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/market/{marketId}")
-    public ResponseEntity<List<Spot>> getSpotsByMarketId(@PathVariable Long marketId) {
-        List<Spot> spots = spotService.getSpotsByMarketId(marketId);
+    public ResponseEntity<List<SpotDto>> getSpotsByMarketId(@PathVariable Long marketId) {
+        List<SpotDto> spots = spotService.getSpotsByMarketId(marketId);
         return ResponseEntity.ok(spots);
     }
     
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<Spot>> getSpotsByCategory(@PathVariable String category) {
-        List<Spot> spots = spotService.getSpotsByCategory(category);
+    public ResponseEntity<List<SpotDto>> getSpotsByCategory(@PathVariable String category) {
+        List<SpotDto> spots = spotService.getSpotsByCategory(category);
         return ResponseEntity.ok(spots);
     }
     
     @GetMapping("/search")
-    public ResponseEntity<List<Spot>> searchSpots(
+    public ResponseEntity<List<SpotDto>> searchSpots(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) Long marketId) {
@@ -61,17 +62,17 @@ public class SpotController {
     }
     
     @PostMapping
-    public ResponseEntity<Spot> createSpot(@RequestBody Spot spot) {
-        Spot savedSpot = spotService.saveSpot(spot);
+    public ResponseEntity<SpotDto> createSpot(@RequestBody Spot spot) {
+        SpotDto savedSpot = spotService.saveSpot(spot);
         return ResponseEntity.ok(savedSpot);
     }
     
     @PutMapping("/{spotId}")
-    public ResponseEntity<Spot> updateSpot(@PathVariable Long spotId, @RequestBody Spot spot) {
-        Optional<Spot> existingSpot = spotService.getSpotById(spotId);
+    public ResponseEntity<SpotDto> updateSpot(@PathVariable Long spotId, @RequestBody Spot spot) {
+        Optional<SpotDto> existingSpot = spotService.getSpotById(spotId);
         if (existingSpot.isPresent()) {
             spot.setSpotId(spotId);
-            Spot updatedSpot = spotService.saveSpot(spot);
+            SpotDto updatedSpot = spotService.saveSpot(spot);
             return ResponseEntity.ok(updatedSpot);
         } else {
             return ResponseEntity.notFound().build();
@@ -80,7 +81,7 @@ public class SpotController {
     
     @DeleteMapping("/{spotId}")
     public ResponseEntity<Void> deleteSpot(@PathVariable Long spotId) {
-        Optional<Spot> spot = spotService.getSpotById(spotId);
+        Optional<SpotDto> spot = spotService.getSpotById(spotId);
         if (spot.isPresent()) {
             spotService.deleteSpot(spotId);
             return ResponseEntity.ok().build();
