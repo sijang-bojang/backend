@@ -10,35 +10,55 @@ import java.util.stream.Collectors;
 @Component
 public class UserCourseProgressMapper {
     
-    public UserCourseProgressDto toDto(UserCourseProgress userCourseProgress) {
-        if (userCourseProgress == null) {
+    public UserCourseProgressDto toDto(UserCourseProgress entity) {
+        if (entity == null) {
             return null;
+        }
+        
+        // 진행률 계산 (예시: 5단계 중 3단계 완료 = 60%)
+        Double progressPercentage = null;
+        if (entity.getCurrentStep() != null) {
+            // 실제로는 코스의 총 단계 수를 가져와서 계산해야 함
+            // 여기서는 임시로 5단계로 가정
+            int totalSteps = 5;
+            progressPercentage = (double) entity.getCurrentStep() / totalSteps * 100;
         }
         
         return UserCourseProgressDto.builder()
-                .id(userCourseProgress.getId())
-                .userId(userCourseProgress.getUser() != null ? userCourseProgress.getUser().getUserId() : null)
-                .username(userCourseProgress.getUser() != null ? userCourseProgress.getUser().getUsername() : null)
-                .courseId(userCourseProgress.getCourse() != null ? userCourseProgress.getCourse().getCourseId() : null)
-                .courseName(userCourseProgress.getCourse() != null ? userCourseProgress.getCourse().getName() : null)
-                .marketName(userCourseProgress.getCourse() != null && userCourseProgress.getCourse().getMarket() != null ? 
-                    userCourseProgress.getCourse().getMarket().getName() : null)
-                .currentStep(userCourseProgress.getCurrentStep())
-                .totalSteps(userCourseProgress.getCourse() != null && userCourseProgress.getCourse().getCourseSpots() != null ? 
-                    userCourseProgress.getCourse().getCourseSpots().size() : 0)
-                .status(userCourseProgress.getStatus())
-                .startedAt(userCourseProgress.getStartedAt())
-                .completedAt(userCourseProgress.getCompletedAt())
+                .id(entity.getId())
+                .userId(entity.getUser() != null ? entity.getUser().getUserId() : null)
+                .userName(entity.getUser() != null ? entity.getUser().getUsername() : null)
+                .courseId(entity.getCourse() != null ? entity.getCourse().getCourseId() : null)
+                .courseName(entity.getCourse() != null ? entity.getCourse().getName() : null)
+                .currentStep(entity.getCurrentStep())
+                .status(entity.getStatus())
+                .startedAt(entity.getStartedAt())
+                .completedAt(entity.getCompletedAt())
+                .progressPercentage(progressPercentage)
                 .build();
     }
     
-    public List<UserCourseProgressDto> toDtoList(List<UserCourseProgress> userCourseProgresses) {
-        if (userCourseProgresses == null) {
+    public List<UserCourseProgressDto> toDtoList(List<UserCourseProgress> entities) {
+        if (entities == null) {
+            return null;
+        }
+        return entities.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+    
+    public UserCourseProgress toEntity(UserCourseProgressDto dto) {
+        if (dto == null) {
             return null;
         }
         
-        return userCourseProgresses.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+        UserCourseProgress entity = new UserCourseProgress();
+        entity.setId(dto.getId());
+        entity.setCurrentStep(dto.getCurrentStep());
+        entity.setStatus(dto.getStatus());
+        entity.setStartedAt(dto.getStartedAt());
+        entity.setCompletedAt(dto.getCompletedAt());
+        
+        return entity;
     }
 }

@@ -3,6 +3,7 @@ package com.sijangmission.demo.controller;
 import com.sijangmission.demo.domain.core.Course;
 import com.sijangmission.demo.dto.CourseDto;
 import com.sijangmission.demo.dto.CourseRecommendationRequest;
+import com.sijangmission.demo.dto.CourseRecommendationResponse;
 import com.sijangmission.demo.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -80,13 +81,13 @@ public class CourseController {
         }
     }
     
-    @PostMapping("/recommend")
-    public ResponseEntity<CourseDto> recommendCourse(@RequestBody CourseRecommendationRequest request) {
-        try {
-            CourseDto recommendedCourse = courseService.recommendCourse(request);
-            return ResponseEntity.ok(recommendedCourse);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
+    	@PostMapping("/recommend")
+	public ResponseEntity<CourseRecommendationResponse> recommendCourse(@RequestBody CourseRecommendationRequest request) {
+		try {
+			CourseRecommendationResponse recommendedCourse = courseService.recommendCourse(request);
+			return ResponseEntity.ok(recommendedCourse);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
 }

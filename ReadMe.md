@@ -1,6 +1,13 @@
 # 시장 미션 백엔드 프로젝트
 
-JPA 기반의 Spring Boot 애플리케이션으로, 시장 탐방과 미션 수행을 관리하는 시스템입니다.
+JPA 기반의 Spring Boot 애플리케이션으로, 시장 탐방과 미션 수행을 관리하는 시스템입니다. AI 기반 코스 추천 기능을 포함합니다.
+
+## 🚀 배포 정보
+
+- **배포 플랫폼**: AWS Elastic Beanstalk
+- **데이터베이스**: AWS RDS MySQL
+- **포트**: 5000 (Elastic Beanstalk 호환)
+- **URL**: `https://sijang.ap-northeast-2.elasticbeanstalk.com`
 
 ## 📁 프로젝트 구조
 
@@ -9,8 +16,8 @@ src/main/java/com/sijangmission/demo/
 ├── domain/          # JPA 엔티티
 │   ├── core/        # 핵심 엔티티 (7개)
 │   └── relation/    # 연결 엔티티 (5개)
-├── dto/             # 데이터 전송 객체 (8개)
-├── mapper/          # 엔티티-DTO 변환 매퍼 (5개)
+├── dto/             # 데이터 전송 객체 (10개)
+├── mapper/          # 엔티티-DTO 변환 매퍼 (8개)
 ├── repository/      # 데이터 접근 계층 (9개)
 ├── service/         # 비즈니스 로직 계층 (7개)
 ├── controller/      # REST API 계층 (7개)
@@ -27,7 +34,7 @@ src/main/java/com/sijangmission/demo/
 - 각 도메인별 JPA Repository 인터페이스
 - Spring Data JPA의 기본 CRUD 메서드 + 커스텀 쿼리 메서드
 
-### 📦 DTO 패키지 (8개 DTO)
+### 📦 DTO 패키지 (10개 DTO)
 - **MarketDto**: 시장 정보 (코스 수, 스팟 수 포함)
 - **SpotDto**: 스팟 정보 (시장명, 미션 수, 코스명들 포함)
 - **CourseDto**: 코스 정보 (시장명, 타입명들, 스팟들, 가족/연인 코스 여부 포함)
@@ -35,24 +42,29 @@ src/main/java/com/sijangmission/demo/
 - **MissionDto**: 미션 정보 (스팟명들, VISIT/NON_VISIT 여부 포함)
 - **UserDto**: 사용자 정보 (완료한 미션/코스 수 포함)
 - **UserMissionDto**: 사용자 미션 진행 상황
-- **UserCourseProgressDto**: 사용자 코스 진행 상황
+- **UserCourseProgressDto**: 사용자 코스 진행 상황 (진행률 포함)
+- **CourseRecommendationRequest**: AI 코스 추천 요청 DTO
+- **CourseRecommendationResponse**: AI 코스 추천 응답 DTO
 
-### 📦 Mapper 패키지 (5개 Mapper)
+### 📦 Mapper 패키지 (8개 Mapper)
 - 엔티티를 DTO로 변환하는 매퍼 클래스들
 - 순환 참조 문제 해결
 - API 응답 구조 최적화
+- 진행률 계산 로직 포함
 
 ### 📦 Service 패키지 (7개 Service)
 - 비즈니스 로직 처리
 - `@Transactional` 어노테이션으로 트랜잭션 관리
 - 엔티티를 DTO로 변환하여 반환
 - 사용자 미션 시작/완료, 코스 진행 등 특별한 비즈니스 로직 포함
+- **AI 코스 추천 기능**: OpenAI API를 활용한 지능형 코스 추천
 
 ### 📦 Controller 패키지 (7개 Controller)
 - RESTful API 엔드포인트 제공
 - HTTP 메서드별 CRUD 작업 지원
 - DTO만 응답으로 반환 (순환 참조 방지)
 - 검색 기능 포함
+- **AI 코스 추천 API**: 키워드 기반 코스 추천 엔드포인트
 
 ## 🔗 주요 매핑 관계
 
@@ -216,6 +228,40 @@ src/main/java/com/sijangmission/demo/
 - `startedAt`: 시작 시간
 - `completedAt`: 완료 시간
 
+## 🤖 AI 코스 추천 시스템
+
+### 기능 설명
+사용자가 선택한 키워드(태그)를 기반으로 6가지 코스 중 가장 적합한 코스를 AI가 추천해주는 시스템입니다.
+
+### API 엔드포인트
+- `POST /api/courses/recommend` - AI 코스 추천
+
+### 요청 형식
+```json
+{
+  "marketId": 1,
+  "marketName": "중앙시장 활성화구역",
+  "tags": ["자차 보유", "연인이랑", "친구랑", "당일치기", "디저트", "밥", "걷기"]
+}
+```
+
+### 응답 형식
+```json
+{
+  "courseId": 1,
+  "courseName": "중앙시장 맛집 탐방 코스",
+  "description": "중앙시장의 대표 맛집들을 둘러보는 코스입니다.",
+  "marketName": "중앙시장 활성화구역",
+  "recommendationReason": "사용자가 선택한 키워드: 자차 보유, 연인이랑, 친구랑, 당일치기, 디저트, 밥, 걷기와 가장 적합한 코스입니다.",
+  "confidenceScore": 0.85
+}
+```
+
+### 기술 스택
+- **OpenAI API**: GPT-3.5-turbo 모델 사용
+- **theokanning/openai-gpt3-java**: OpenAI API 클라이언트
+- **프롬프트 엔지니어링**: 코스 설명과 사용자 태그를 기반으로 한 지능형 추천
+
 ## 🚀 API 엔드포인트
 
 ### Markets
@@ -234,6 +280,7 @@ src/main/java/com/sijangmission/demo/
 - `POST /api/courses` - 코스 생성 (CourseDto 반환)
 - `PUT /api/courses/{courseId}` - 코스 수정 (CourseDto 반환)
 - `DELETE /api/courses/{courseId}` - 코스 삭제
+- `POST /api/courses/recommend` - AI 코스 추천 (CourseRecommendationResponse 반환)
 
 ### Users
 - `GET /api/users` - 모든 사용자 조회 (UserDto 반환)
@@ -271,13 +318,39 @@ src/main/java/com/sijangmission/demo/
 
 ## 🛠️ 기술 스택
 
-- **Framework**: Spring Boot
+- **Framework**: Spring Boot 3.5.4
 - **ORM**: JPA/Hibernate
-- **Database**: JPA 지원 데이터베이스 (MySQL, PostgreSQL, H2 등)
+- **Database**: MySQL (AWS RDS)
 - **Build Tool**: Gradle
-- **Language**: Java
+- **Language**: Java 17
 - **Lombok**: 코드 간소화
 - **Architecture**: DTO 패턴, 계층형 아키텍처
+- **AI Integration**: OpenAI API (GPT-3.5-turbo)
+- **Deployment**: AWS Elastic Beanstalk
+- **Cloud Database**: AWS RDS MySQL
+
+## ⚙️ 환경 설정
+
+### 로컬 개발 환경
+```properties
+# application.properties
+spring.datasource.url=jdbc:mysql://localhost:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
+spring.datasource.username=root
+spring.datasource.password=password
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.defer-datasource-initialization=true
+server.port=8080
+```
+
+### AWS 배포 환경
+```properties
+# 환경 변수 설정
+JDBC_CONNECTION_STRING=jdbc:mysql://database-sijang.ctcy86co8m0x.ap-northeast-2.rds.amazonaws.com:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
+DB_USERNAME=admin
+DB_PASSWORD=mydb1234
+SERVER_PORT=5000
+OPENAI_API_KEY=your-openai-api-key-here
+```
 
 ## 📊 데이터 구조
 
@@ -306,6 +379,7 @@ Controller → Client (DTO 반환)
 - **API 최적화**: 필요한 데이터만 전송
 - **유지보수성**: 엔티티 변경이 API에 직접 영향 없음
 - **명확한 계약**: API 응답 구조 명확화
+- **진행률 계산**: UserCourseProgressDto에 진행률 퍼센티지 포함
 
 ## 📝 주요 특징
 
@@ -319,3 +393,27 @@ Controller → Client (DTO 반환)
 8. **코스 분류 시스템**: 가족/연인 코스 분류를 통한 맞춤형 추천 기능
 9. **편의 메서드**: 코스 타입 확인 및 조회를 위한 편의 메서드 제공
 10. **매퍼 패턴**: 엔티티-DTO 변환을 위한 전용 매퍼 클래스 제공
+11. **AI 추천 시스템**: OpenAI API를 활용한 지능형 코스 추천
+12. **AWS 배포**: Elastic Beanstalk와 RDS를 활용한 클라우드 배포
+13. **데이터 지속성**: `ddl-auto=update`와 `data.sql`을 통한 데이터 보존
+
+## 🚀 실행 방법
+
+### 로컬 실행
+```bash
+# Gradle 빌드
+./gradlew build
+
+# 애플리케이션 실행
+./gradlew bootRun
+```
+
+### AWS 배포
+```bash
+# JAR 파일 생성
+./gradlew bootJar
+
+# Elastic Beanstalk에 JAR 파일 업로드
+# AWS Console에서 환경 변수 설정 후 배포
+```
+

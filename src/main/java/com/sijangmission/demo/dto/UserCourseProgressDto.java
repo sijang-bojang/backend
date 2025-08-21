@@ -1,28 +1,25 @@
 package com.sijangmission.demo.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserCourseProgressDto {
     private Long id;
     private Long userId;
-    private String username;
+    private String userName;
     private Long courseId;
     private String courseName;
-    private String marketName;
     private Integer currentStep;
-    private Integer totalSteps;
     private String status;
     private LocalDateTime startedAt;
     private LocalDateTime completedAt;
+    private Double progressPercentage;
 }

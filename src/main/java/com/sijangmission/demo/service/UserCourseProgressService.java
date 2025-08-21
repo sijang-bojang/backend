@@ -1,6 +1,8 @@
 package com.sijangmission.demo.service;
 
 import com.sijangmission.demo.domain.relation.UserCourseProgress;
+import com.sijangmission.demo.dto.UserCourseProgressDto;
+import com.sijangmission.demo.mapper.UserCourseProgressMapper;
 import com.sijangmission.demo.repository.UserCourseProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,79 +16,91 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserCourseProgressService {
+	
+	private final UserCourseProgressRepository userCourseProgressRepository;
+	private final UserCourseProgressMapper userCourseProgressMapper;
     
-    private final UserCourseProgressRepository userCourseProgressRepository;
+    	public List<UserCourseProgressDto> getAllUserCourseProgresses() {
+		List<UserCourseProgress> entities = userCourseProgressRepository.findAll();
+		return userCourseProgressMapper.toDtoList(entities);
+	}
+	
+	public Optional<UserCourseProgressDto> getUserCourseProgressById(Long id) {
+		Optional<UserCourseProgress> entity = userCourseProgressRepository.findById(id);
+		return entity.map(userCourseProgressMapper::toDto);
+	}
+	
+	public List<UserCourseProgressDto> getUserCourseProgressesByUserId(Long userId) {
+		List<UserCourseProgress> entities = userCourseProgressRepository.findByUserUserId(userId);
+		return userCourseProgressMapper.toDtoList(entities);
+	}
+	
+	public List<UserCourseProgressDto> getUserCourseProgressesByUserIdAndStatus(Long userId, String status) {
+		List<UserCourseProgress> entities = userCourseProgressRepository.findByUserUserIdAndStatus(userId, status);
+		return userCourseProgressMapper.toDtoList(entities);
+	}
+	
+	public Optional<UserCourseProgressDto> getUserCourseProgressByUserIdAndCourseId(Long userId, Long courseId) {
+		Optional<UserCourseProgress> entity = userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
+		return entity.map(userCourseProgressMapper::toDto);
+	}
+	
+	public List<UserCourseProgressDto> getUserCourseProgressesByCourseId(Long courseId) {
+		List<UserCourseProgress> entities = userCourseProgressRepository.findByCourseCourseId(courseId);
+		return userCourseProgressMapper.toDtoList(entities);
+	}
     
-    public List<UserCourseProgress> getAllUserCourseProgresses() {
-        return userCourseProgressRepository.findAll();
-    }
-    
-    public Optional<UserCourseProgress> getUserCourseProgressById(Long id) {
-        return userCourseProgressRepository.findById(id);
-    }
-    
-    public List<UserCourseProgress> getUserCourseProgressesByUserId(Long userId) {
-        return userCourseProgressRepository.findByUserUserId(userId);
-    }
-    
-    public List<UserCourseProgress> getUserCourseProgressesByUserIdAndStatus(Long userId, String status) {
-        return userCourseProgressRepository.findByUserUserIdAndStatus(userId, status);
-    }
-    
-    public Optional<UserCourseProgress> getUserCourseProgressByUserIdAndCourseId(Long userId, Long courseId) {
-        return userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
-    }
-    
-    public List<UserCourseProgress> getUserCourseProgressesByCourseId(Long courseId) {
-        return userCourseProgressRepository.findByCourseCourseId(courseId);
-    }
-    
-    @Transactional
-    public UserCourseProgress saveUserCourseProgress(UserCourseProgress userCourseProgress) {
-        return userCourseProgressRepository.save(userCourseProgress);
-    }
-    
-    @Transactional
-    public UserCourseProgress startCourse(Long userId, Long courseId) {
-        Optional<UserCourseProgress> existingProgress = userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
-        if (existingProgress.isPresent()) {
-            UserCourseProgress progress = existingProgress.get();
-            progress.setStatus("IN_PROGRESS");
-            progress.setStartedAt(LocalDateTime.now());
-            progress.setCurrentStep(1);
-            return userCourseProgressRepository.save(progress);
-        } else {
-            // Create new course progress
-            UserCourseProgress progress = new UserCourseProgress();
-            progress.setStatus("IN_PROGRESS");
-            progress.setStartedAt(LocalDateTime.now());
-            progress.setCurrentStep(1);
-            return userCourseProgressRepository.save(progress);
-        }
-    }
-    
-    @Transactional
-    public UserCourseProgress updateCourseProgress(Long userId, Long courseId, Integer currentStep) {
-        Optional<UserCourseProgress> progressOpt = userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
-        if (progressOpt.isPresent()) {
-            UserCourseProgress progress = progressOpt.get();
-            progress.setCurrentStep(currentStep);
-            return userCourseProgressRepository.save(progress);
-        }
-        throw new RuntimeException("User course progress not found");
-    }
-    
-    @Transactional
-    public UserCourseProgress completeCourse(Long userId, Long courseId) {
-        Optional<UserCourseProgress> progressOpt = userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
-        if (progressOpt.isPresent()) {
-            UserCourseProgress progress = progressOpt.get();
-            progress.setStatus("COMPLETED");
-            progress.setCompletedAt(LocalDateTime.now());
-            return userCourseProgressRepository.save(progress);
-        }
-        throw new RuntimeException("User course progress not found");
-    }
+    	@Transactional
+	public UserCourseProgressDto saveUserCourseProgress(UserCourseProgress userCourseProgress) {
+		UserCourseProgress savedEntity = userCourseProgressRepository.save(userCourseProgress);
+		return userCourseProgressMapper.toDto(savedEntity);
+	}
+	
+	@Transactional
+	public UserCourseProgressDto startCourse(Long userId, Long courseId) {
+		Optional<UserCourseProgress> existingProgress = userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
+		if (existingProgress.isPresent()) {
+			UserCourseProgress progress = existingProgress.get();
+			progress.setStatus("IN_PROGRESS");
+			progress.setStartedAt(LocalDateTime.now());
+			progress.setCurrentStep(1);
+			UserCourseProgress savedEntity = userCourseProgressRepository.save(progress);
+			return userCourseProgressMapper.toDto(savedEntity);
+		} else {
+			// Create new course progress
+			UserCourseProgress progress = new UserCourseProgress();
+			progress.setStatus("IN_PROGRESS");
+			progress.setStartedAt(LocalDateTime.now());
+			progress.setCurrentStep(1);
+			UserCourseProgress savedEntity = userCourseProgressRepository.save(progress);
+			return userCourseProgressMapper.toDto(savedEntity);
+		}
+	}
+	
+	@Transactional
+	public UserCourseProgressDto updateCourseProgress(Long userId, Long courseId, Integer currentStep) {
+		Optional<UserCourseProgress> progressOpt = userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
+		if (progressOpt.isPresent()) {
+			UserCourseProgress progress = progressOpt.get();
+			progress.setCurrentStep(currentStep);
+			UserCourseProgress savedEntity = userCourseProgressRepository.save(progress);
+			return userCourseProgressMapper.toDto(savedEntity);
+		}
+		throw new RuntimeException("User course progress not found");
+	}
+	
+	@Transactional
+	public UserCourseProgressDto completeCourse(Long userId, Long courseId) {
+		Optional<UserCourseProgress> progressOpt = userCourseProgressRepository.findByUserUserIdAndCourseCourseId(userId, courseId);
+		if (progressOpt.isPresent()) {
+			UserCourseProgress progress = progressOpt.get();
+			progress.setStatus("COMPLETED");
+			progress.setCompletedAt(LocalDateTime.now());
+			UserCourseProgress savedEntity = userCourseProgressRepository.save(progress);
+			return userCourseProgressMapper.toDto(savedEntity);
+		}
+		throw new RuntimeException("User course progress not found");
+	}
     
     @Transactional
     public void deleteUserCourseProgress(Long id) {
