@@ -1,5 +1,5 @@
 -- Markets 데이터 삽입
-INSERT INTO markets (market_id, name, address, latitude, longitude, description) VALUES
+INSERT IGNORE INTO markets (market_id, name, address, latitude, longitude, description) VALUES
                                                                                      (1, '대전 중앙 시장', '대전광역시 동구 대전로 783', 36.3296, 127.4332, '중구에 위치하는 시장'),
                                                                                      (2, '대전 문창 시장', '대전광역시 중구 문창로 10번길 38', 36.3147, 127.4375, '문창동에 위치하는 시장'),
                                                                                      (3, '대전 역전 시장', '대전광역시 동구 역전시장길 34', 36.3302, 127.4341, '대전역 주변에 위치하는 시장');
