@@ -2,13 +2,233 @@
 
 JPA 기반의 Spring Boot 애플리케이션으로, 시장 탐방과 미션 수행을 관리하는 시스템입니다. AI 기반 코스 추천 기능을 포함합니다.
 
+# 시장 미션 백엔드 프로젝트
+
+JPA 기반의 Spring Boot 애플리케이션으로, 시장 탐방과 미션 수행을 관리하는 시스템입니다. AI 기반 코스 추천 기능을 포함합니다.
+
 ## 🚀 배포 정보
 
-- **배포 플랫폼**: AWS Elastic Beanstalk
-- **데이터베이스**: AWS RDS MySQL
-- **포트**: 5000 (Elastic Beanstalk 호환)
-- **URL**: `https://sijang.ap-northeast-2.elasticbeanstalk.com`
+- **배포 플랫폼**: AWS EC2 (Docker)
+- **데이터베이스**: EC2 내부 MySQL
+- **포트**: 5000
+- **URL**: `http://3.34.186.143:5000`
+- **API 엔드포인트**: `http://3.34.186.143:5000/api/...`
 
+## 📋 배포 과정 (완료됨)
+
+### 1. EC2 환경 설정
+- **서버**: AWS EC2 (IP: 3.34.186.143)
+- **OS**: Amazon Linux 2023
+- **접속**: PEM 키를 통한 SSH 접속
+
+### 2. MySQL 설치 및 설정
+```bash
+# MySQL 설치
+sudo dnf install mysql mysql-server -y
+
+# MySQL 서비스 시작
+sudo systemctl start mysqld
+sudo systemctl enable mysqld
+
+# 데이터베이스 생성 및 사용자 설정
+sudo mysql -u root
+CREATE DATABASE sijang1;
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'MyPassword123!';
+GRANT ALL PRIVILEGES ON sijang1.* TO 'user'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### 3. 데이터 마이그레이션
+```bash
+# 로컬에서 백업 생성
+mysqldump -u root -p1234 sijang1 > sijang1_backup.sql
+
+# EC2에 업로드
+scp -i /Users/User/hackathon_server95.pem sijang1_backup.sql ec2-user@3.34.186.143:/home/ec2-user/app/
+
+# EC2에서 데이터 복원
+sudo mysql -u user -p'MyPassword123!' sijang1 < sijang1_backup.sql
+```
+
+### 4. Docker 이미지 빌드 및 배포
+```bash
+# 로컬에서 AMD64 아키텍처로 빌드
+docker build --platform linux/amd64 -t sijang-backend .
+
+# 이미지 저장 및 업로드
+docker save sijang-backend > sijang-backend-amd64.tar
+scp -i /Users/User/hackathon_server95.pem sijang-backend-amd64.tar ec2-user@3.34.186.143:/home/ec2-user/app/
+
+# EC2에서 이미지 로드 및 실행
+docker load < sijang-backend-amd64.tar
+docker run -d --name sijang-backend --network host \
+  -e JDBC_CONNECTION_STRING="jdbc:mysql://localhost:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8" \
+  -e DB_USERNAME="user" \
+  -e DB_PASSWORD="MyPassword123!" \
+  sijang-backend:latest
+```
+
+## 🔄 코드 수정 및 배포 절차
+
+### 코드 수정 시 (로컬에서)
+
+#### 1단계: 로컬에서 코드 수정
+```bash
+# 코드 수정 후 빌드
+./gradlew build -x test
+
+# 새로운 Docker 이미지 빌드 (AMD64 아키텍처 필수)
+docker build --platform linux/amd64 -t sijang-backend .
+
+# 이미지 저장
+docker save sijang-backend > sijang-backend-amd64.tar
+```
+
+#### 2단계: EC2에 업로드
+```bash
+# 새 이미지 업로드
+scp -i /Users/User/hackathon_server95.pem sijang-backend-amd64.tar ec2-user@3.34.186.143:/home/ec2-user/app/
+```
+
+#### 3단계: EC2에서 배포
+```bash
+# EC2 접속
+ssh -i /Users/User/hackathon_server95.pem ec2-user@3.34.186.143
+
+# 기존 컨테이너 중지 및 제거
+docker stop sijang-backend
+docker rm sijang-backend
+
+# 새 이미지 로드
+docker load < sijang-backend-amd64.tar
+
+# 새 컨테이너 실행
+docker run -d --name sijang-backend --network host \
+  -e JDBC_CONNECTION_STRING="jdbc:mysql://localhost:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8" \
+  -e DB_USERNAME="user" \
+  -e DB_PASSWORD="MyPassword123!" \
+  sijang-backend:latest
+```
+
+#### 4단계: 배포 확인
+```bash
+# 컨테이너 상태 확인
+docker ps
+
+# API 테스트
+curl http://localhost:5000/api/markets
+```
+
+### DB 내용 수정 시
+
+#### 옵션 1: 로컬에서 수정 후 마이그레이션
+```bash
+# 1. 로컬 MySQL에서 데이터 수정
+mysql -u root -p1234 sijang1
+
+# 2. 수정된 데이터 백업
+mysqldump -u root -p1234 sijang1 > sijang1_updated_backup.sql
+
+# 3. EC2에 업로드
+scp -i /Users/User/hackathon_server95.pem sijang1_updated_backup.sql ec2-user@3.34.186.143:/home/ec2-user/app/
+
+# 4. EC2에서 복원
+ssh -i /Users/User/hackathon_server95.pem ec2-user@3.34.186.143
+sudo mysql -u user -p'MyPassword123!' sijang1 < sijang1_updated_backup.sql
+```
+
+#### 옵션 2: EC2에서 직접 수정
+```bash
+# EC2 접속
+ssh -i /Users/User/hackathon_server95.pem ec2-user@3.34.186.143
+
+# MySQL 접속
+sudo mysql -u user -p'MyPassword123!' sijang1
+
+# SQL 명령어로 직접 수정
+UPDATE markets SET name = '새로운 이름' WHERE market_id = 1;
+```
+
+## 🚀 자동화 배포 스크립트
+
+### deploy.sh 생성 (선택사항)
+```bash
+#!/bin/bash
+echo "Building Docker image..."
+./gradlew build -x test
+docker build --platform linux/amd64 -t sijang-backend .
+docker save sijang-backend > sijang-backend-amd64.tar
+
+echo "Uploading to EC2..."
+scp -i /Users/User/hackathon_server95.pem sijang-backend-amd64.tar ec2-user@3.34.186.143:/home/ec2-user/app/
+
+echo "Deploying on EC2..."
+ssh -i /Users/User/hackathon_server95.pem ec2-user@3.34.186.143 << 'EOF'
+cd /home/ec2-user/app
+docker stop sijang-backend
+docker rm sijang-backend
+docker load < sijang-backend-amd64.tar
+docker run -d --name sijang-backend --network host \
+  -e JDBC_CONNECTION_STRING="jdbc:mysql://localhost:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8" \
+  -e DB_USERNAME="user" \
+  -e DB_PASSWORD="MyPassword123!" \
+  sijang-backend:latest
+echo "Deployment completed!"
+EOF
+```
+
+**사용법**: `./deploy.sh`
+
+## 📝 Git 관리
+
+### Git과 배포의 관계
+- **Git 저장소**: 로컬에서만 관리
+- **배포**: Git과 무관하게 Docker 이미지 기반으로 진행
+- **코드 수정**: 로컬에서 Git 커밋 → Docker 빌드 → EC2 배포
+
+### Git 사용 시 주의사항
+- ✅ **로컬 코드 수정 및 커밋**: 정상
+- ✅ **GitHub/GitLab 푸시**: 백업용으로 권장
+- ❌ **EC2에서 Git 작업**: 불필요 (배포된 애플리케이션만 관리)
+
+## 🔧 환경 설정
+
+### 로컬 개발 환경
+```properties
+# application.properties
+spring.datasource.url=jdbc:mysql://localhost:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
+spring.datasource.username=root
+spring.datasource.password=1234
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.defer-datasource-initialization=true
+server.port=8080
+```
+
+### EC2 배포 환경
+```bash
+# Docker 컨테이너 환경 변수
+JDBC_CONNECTION_STRING=jdbc:mysql://localhost:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
+DB_USERNAME=user
+DB_PASSWORD=MyPassword123!
+SERVER_PORT=5000
+```
+
+## 🚨 주의사항
+
+1. **아키텍처**: 반드시 `--platform linux/amd64`로 빌드해야 함
+2. **네트워크**: `--network host` 모드로 MySQL 접근
+3. **포트**: 5000 포트 사용 (Elastic Beanstalk 호환)
+4. **백업**: DB 수정 전 반드시 백업 생성
+5. **테스트**: 배포 후 API 테스트 필수
+
+## 📊 현재 상태
+
+- ✅ **API 서버**: `http://3.34.186.143:5000`에서 정상 실행
+- ✅ **데이터베이스**: EC2 MySQL의 `sijang1` DB 사용
+- ✅ **데이터**: 로컬 백업 데이터 완전 복원
+- ✅ **외부 접근**: 프론트엔드에서 API 호출 가능
+
+# 프로젝트 설명
 ## 📁 프로젝트 구조
 
 ```
