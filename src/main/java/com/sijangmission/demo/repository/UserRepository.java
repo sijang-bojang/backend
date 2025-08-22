@@ -2,6 +2,8 @@ package com.sijangmission.demo.repository;
 
 import com.sijangmission.demo.domain.core.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -16,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     
     boolean existsByEmail(String email);
+    
+    @Query("SELECT u FROM User u WHERE u.userId = :userId")
+    Optional<User> findByIdWithCompleteStamp(@Param("userId") Long userId);
 }

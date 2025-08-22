@@ -15,18 +15,7 @@ public class UserMissionMapper {
             return null;
         }
         
-        return UserMissionDto.builder()
-                .userMissionId(userMission.getUserMissionId())
-                .userId(userMission.getUser() != null ? userMission.getUser().getUserId() : null)
-                .username(userMission.getUser() != null ? userMission.getUser().getUsername() : null)
-                .missionId(userMission.getMission() != null ? userMission.getMission().getMissionId() : null)
-                .missionTitle(userMission.getMission() != null ? userMission.getMission().getTitle() : null)
-                .missionType(userMission.getMission() != null ? userMission.getMission().getMissionType() : null)
-                .rewardPoints(userMission.getMission() != null ? userMission.getMission().getRewardPoints() : null)
-                .status(userMission.getStatus())
-                .startedAt(userMission.getStartedAt())
-                .completedAt(userMission.getCompletedAt())
-                .build();
+        return UserMissionDto.fromEntity(userMission);
     }
     
     public List<UserMissionDto> toDtoList(List<UserMission> userMissions) {

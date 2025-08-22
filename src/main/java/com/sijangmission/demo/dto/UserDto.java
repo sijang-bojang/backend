@@ -19,4 +19,5 @@ public class UserDto {
     private Integer exp;
     private Integer completedMissionCount;
     private Integer completedCourseCount;
+
 }

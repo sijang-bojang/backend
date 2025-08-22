@@ -90,6 +90,13 @@ public class UserController {
         }
     }
     
+    @GetMapping("/{userId}/stamps")
+    public ResponseEntity<UserDto> getUserStamps(@PathVariable Long userId) {
+        Optional<UserDto> user = userService.getUserById(userId);
+        return user.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         Optional<UserDto> user = userService.getUserById(userId);

@@ -507,6 +507,7 @@ src/main/java/com/sijangmission/demo/
 - `GET /api/users/{userId}` - 특정 사용자 조회 (UserDto 반환)
 - `GET /api/users/username/{username}` - 사용자명으로 조회 (UserDto 반환)
 - `GET /api/users/email/{email}` - 이메일로 조회 (UserDto 반환)
+- `GET /api/users/{userId}/stamps` - 사용자 스탬프 조회 (UserDto 반환)
 - `POST /api/users` - 사용자 생성 (UserDto 반환)
 - `PUT /api/users/{userId}` - 사용자 수정 (UserDto 반환)
 - `PUT /api/users/{userId}/reward` - 보상 포인트 업데이트 (UserDto 반환)
@@ -521,6 +522,16 @@ src/main/java/com/sijangmission/demo/
 - `POST /api/missions` - 미션 생성 (MissionDto 반환)
 - `PUT /api/missions/{missionId}` - 미션 수정 (MissionDto 반환)
 - `DELETE /api/missions/{missionId}` - 미션 삭제
+
+### Spots
+- `GET /api/spots` - 모든 스팟 조회 (SpotDto 반환)
+- `GET /api/spots/{spotId}` - 특정 스팟 조회 (SpotDto 반환)
+- `GET /api/spots/market/{marketId}` - 시장별 스팟 조회 (SpotDto 리스트 반환)
+- `GET /api/spots/category/{category}` - 카테고리별 스팟 조회 (SpotDto 리스트 반환)
+- `GET /api/spots/search` - 스팟 검색 (SpotDto 리스트 반환)
+- `POST /api/spots` - 스팟 생성 (SpotDto 반환)
+- `PUT /api/spots/{spotId}` - 스팟 수정 (SpotDto 반환)
+- `DELETE /api/spots/{spotId}` - 스팟 삭제
 
 ### User Missions
 - `GET /api/user-missions` - 모든 사용자 미션 조회 (UserMissionDto 반환)
@@ -616,6 +627,26 @@ Controller → Client (DTO 반환)
 11. **AI 추천 시스템**: OpenAI API를 활용한 지능형 코스 추천
 12. **AWS 배포**: Elastic Beanstalk와 RDS를 활용한 클라우드 배포
 13. **데이터 지속성**: `ddl-auto=update`와 `data.sql`을 통한 데이터 보존
+14. **스탬프 투어 시스템**: 코스 완료 시 자동으로 스탬프 추가, 미션 완료 시 코스 완료 자동 체크
+
+## 🏆 스탬프 투어 핵심 로직
+
+### 스탬프 시스템
+- **complete_stamp**: 사용자가 완료한 코스 개수 (스탬프 개수)
+- **자동 증가**: 코스 완료 시 자동으로 +1 증가
+- **동기화**: `complete_stamp = 완료된 코스 개수`
+
+### 미션-코스 연동 시스템
+1. **미션 완료**: 사용자가 특정 미션을 완료
+2. **코스 체크**: 해당 미션이 속한 모든 코스의 미션 완료 상태 확인
+3. **자동 완료**: 코스의 모든 미션이 완료되면 코스도 자동 완료
+4. **스탬프 추가**: 코스 완료 시 스탬프 자동 추가
+
+### 핵심 메서드
+- `User.addCompleteStamp()`: 스탬프 추가
+- `UserCourseProgressService.completeCourse()`: 코스 완료 + 스탬프 추가
+- `UserMissionService.completeMission()`: 미션 완료 + 코스 완료 체크
+- `UserCourseProgressService.checkAndCompleteCourseIfAllMissionsDone()`: 모든 미션 완료 시 코스 자동 완료
 
 ## 🚀 실행 방법
 

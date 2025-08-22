@@ -27,7 +27,7 @@ public class UserService {
     }
     
     public Optional<UserDto> getUserById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findByIdWithCompleteStamp(userId);
         return user.map(userMapper::toDto);
     }
     

@@ -22,11 +22,11 @@ public class UserMission {
     private Long userMissionId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private com.sijangmission.demo.domain.core.User user;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mission_id")
+    @JoinColumn(name = "mission_id", nullable = false)
     private com.sijangmission.demo.domain.core.Mission mission;
     
     @Column(name = "status")

@@ -84,10 +84,20 @@ public class CourseController {
     	@PostMapping("/recommend")
 	public ResponseEntity<CourseRecommendationResponse> recommendCourse(@RequestBody CourseRecommendationRequest request) {
 		try {
+			// 요청 유효성 검사
+			if (request.getMarketId() == null) {
+				return ResponseEntity.badRequest().body(null);
+			}
+			if (request.getTags() == null || request.getTags().isEmpty()) {
+				return ResponseEntity.badRequest().body(null);
+			}
+			
 			CourseRecommendationResponse recommendedCourse = courseService.recommendCourse(request);
 			return ResponseEntity.ok(recommendedCourse);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			System.err.println("Recommendation error: " + e.getMessage());
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body(null);
 		}
 	}
 }

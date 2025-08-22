@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "User")
 @Table(name = "users")
 @Getter
 @Setter
@@ -36,6 +36,8 @@ public class User {
     
     @Column(name = "exp")
     private Integer exp = 0;
+    
+
     
     // Many-to-Many relationship with Mission through UserMission
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -68,4 +70,6 @@ public class User {
     public void addExperience(Integer exp) {
         this.exp += exp;
     }
+    
+
 }
