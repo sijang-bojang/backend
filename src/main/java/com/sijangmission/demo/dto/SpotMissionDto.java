@@ -17,6 +17,7 @@ public class SpotMissionDto {
     private String spotName;
     private Long missionId;
     private String missionTitle;
+    private String missionDescription;
     private String missionType;
     private Integer rewardPoints;
 }

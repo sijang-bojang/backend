@@ -1,6 +1,7 @@
 package com.sijangmission.demo.controller;
 
 import com.sijangmission.demo.dto.SpotMissionDto;
+import com.sijangmission.demo.dto.MissionDto;
 import com.sijangmission.demo.service.SpotMissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,15 @@ public class SpotMissionController {
     
     // 스팟에 연결된 모든 미션 조회
     @GetMapping("/{spotId}/missions")
-    public ResponseEntity<List<SpotMissionDto>> getMissionsBySpotId(@PathVariable Long spotId) {
-        List<SpotMissionDto> missions = spotMissionService.getMissionsBySpotId(spotId);
+    public ResponseEntity<List<MissionDto>> getMissionsBySpotId(@PathVariable Long spotId) {
+        List<MissionDto> missions = spotMissionService.getMissionsBySpotId(spotId);
         return ResponseEntity.ok(missions);
     }
     
     // 스팟에 연결된 VISIT 타입 미션만 조회
     @GetMapping("/{spotId}/missions/visit")
-    public ResponseEntity<List<SpotMissionDto>> getVisitMissionsBySpotId(@PathVariable Long spotId) {
-        List<SpotMissionDto> visitMissions = spotMissionService.getVisitMissionsBySpotId(spotId);
+    public ResponseEntity<List<MissionDto>> getVisitMissionsBySpotId(@PathVariable Long spotId) {
+        List<MissionDto> visitMissions = spotMissionService.getVisitMissionsBySpotId(spotId);
         return ResponseEntity.ok(visitMissions);
     }
     

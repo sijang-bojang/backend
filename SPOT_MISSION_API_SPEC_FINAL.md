@@ -366,3 +366,4 @@ curl -X GET "http://3.34.186.143:8080/api/spots/1/missions/count"
 - **데이터베이스**: MySQL (sijang1)
 - **프로필**: prod
 - **컨테이너**: Docker (sijang-backend)
+

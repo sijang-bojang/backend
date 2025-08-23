@@ -21,6 +21,7 @@ public class SpotMissionMapper {
                 .spotName(entity.getSpot() != null ? entity.getSpot().getName() : null)
                 .missionId(entity.getMission() != null ? entity.getMission().getMissionId() : null)
                 .missionTitle(entity.getMission() != null ? entity.getMission().getTitle() : null)
+                .missionDescription(entity.getMission() != null ? entity.getMission().getDescription() : null)
                 .missionType(entity.getMission() != null ? entity.getMission().getMissionType() : null)
                 .rewardPoints(entity.getMission() != null ? entity.getMission().getRewardPoints() : null)
                 .build();

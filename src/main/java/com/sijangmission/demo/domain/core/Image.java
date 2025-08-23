@@ -22,7 +22,7 @@ public class Image {
     @Column(name = "image_id")
     private Long imageId;
     
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = false, length = 500)
     private String imageUrl;
     
     // One-to-Many relationship with Spot

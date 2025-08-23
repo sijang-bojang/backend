@@ -23,8 +23,10 @@ public class UserMapper {
                 .count() : 0;
         
         // completeStamp와 completedCourseCount의 일관성 보장
-        // completeStamp가 더 정확한 값이므로 이를 우선 사용
-        int finalCompletedCourseCount = Math.max((int) completedCourseCount, user.getCompleteStamp());
+        // completeStamp가 null일 수 있으므로 안전하게 처리
+        Integer completeStamp = user.getCompleteStamp();
+        int finalCompletedCourseCount = Math.max((int) completedCourseCount, 
+            completeStamp != null ? completeStamp : 0);
         
         return UserDto.builder()
                 .userId(user.getUserId())
@@ -34,7 +36,7 @@ public class UserMapper {
                 .exp(user.getExp())
                 .completedMissionCount((int) completedMissionCount)
                 .completedCourseCount(finalCompletedCourseCount)
-                .completeStamp(user.getCompleteStamp())
+                .completeStamp(completeStamp != null ? completeStamp : 0)
                 .build();
     }
 }

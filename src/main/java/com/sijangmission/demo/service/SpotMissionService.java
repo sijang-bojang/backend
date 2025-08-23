@@ -4,7 +4,9 @@ import com.sijangmission.demo.domain.core.Mission;
 import com.sijangmission.demo.domain.core.Spot;
 import com.sijangmission.demo.domain.relation.SpotMission;
 import com.sijangmission.demo.dto.SpotMissionDto;
+import com.sijangmission.demo.dto.MissionDto;
 import com.sijangmission.demo.mapper.SpotMissionMapper;
+import com.sijangmission.demo.mapper.MissionMapper;
 import com.sijangmission.demo.repository.MissionRepository;
 import com.sijangmission.demo.repository.SpotMissionRepository;
 import com.sijangmission.demo.repository.SpotRepository;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,17 +27,22 @@ public class SpotMissionService {
     private final SpotRepository spotRepository;
     private final MissionRepository missionRepository;
     private final SpotMissionMapper spotMissionMapper;
+    private final MissionMapper missionMapper;
     
-    // 스팟에 연결된 모든 미션 조회
-    public List<SpotMissionDto> getMissionsBySpotId(Long spotId) {
+    // 스팟에 연결된 모든 미션 조회 (MissionDto 반환)
+    public List<MissionDto> getMissionsBySpotId(Long spotId) {
         List<SpotMission> spotMissions = spotMissionRepository.findBySpotSpotId(spotId);
-        return spotMissionMapper.toDtoList(spotMissions);
+        return spotMissions.stream()
+                .map(spotMission -> missionMapper.toDto(spotMission.getMission()))
+                .collect(Collectors.toList());
     }
     
-    // 스팟에 연결된 VISIT 타입 미션만 조회
-    public List<SpotMissionDto> getVisitMissionsBySpotId(Long spotId) {
+    // 스팟에 연결된 VISIT 타입 미션만 조회 (MissionDto 반환)
+    public List<MissionDto> getVisitMissionsBySpotId(Long spotId) {
         List<SpotMission> visitMissions = spotMissionRepository.findVisitMissionsBySpotId(spotId);
-        return spotMissionMapper.toDtoList(visitMissions);
+        return visitMissions.stream()
+                .map(spotMission -> missionMapper.toDto(spotMission.getMission()))
+                .collect(Collectors.toList());
     }
     
     // 미션에 연결된 모든 스팟 조회
