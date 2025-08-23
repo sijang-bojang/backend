@@ -15,6 +15,13 @@ public class SpotMapper {
             return null;
         }
         
+        // VISIT 타입 미션만 필터링
+        List<String> visitMissionTitles = spot.getMissions() != null ? 
+            spot.getMissions().stream()
+                .filter(mission -> "VISIT".equals(mission.getMissionType()))
+                .map(mission -> mission.getTitle())
+                .collect(Collectors.toList()) : null;
+        
         return SpotDto.builder()
                 .spotId(spot.getSpotId())
                 .marketId(spot.getMarket() != null ? spot.getMarket().getMarketId() : null)
@@ -26,6 +33,7 @@ public class SpotMapper {
                 .latitude(spot.getLatitude())
                 .longitude(spot.getLongitude())
                 .missionCount(spot.getMissions() != null ? spot.getMissions().size() : 0)
+                .visitMissionTitles(visitMissionTitles)
                 .courseNames(spot.getCourses() != null ? 
                     spot.getCourses().stream()
                         .map(course -> course.getName())

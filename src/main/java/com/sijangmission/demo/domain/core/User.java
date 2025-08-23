@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "User")
+@Entity
 @Table(name = "users")
 @Getter
 @Setter
@@ -37,7 +37,8 @@ public class User {
     @Column(name = "exp")
     private Integer exp = 0;
     
-
+    @Column(name = "complete_stamp")
+    private Integer completeStamp = 0;
     
     // Many-to-Many relationship with Mission through UserMission
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -71,5 +72,13 @@ public class User {
         this.exp += exp;
     }
     
-
+    // 편의 메서드: 완료된 스탬프 추가
+    public void addCompleteStamp() {
+        this.completeStamp += 1;
+    }
+    
+    // 편의 메서드: 완료된 스탬프 개수 조회
+    public Integer getCompleteStampCount() {
+        return this.completeStamp;
+    }
 }

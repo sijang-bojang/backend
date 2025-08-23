@@ -7,7 +7,6 @@ import com.sijangmission.demo.mapper.UserCourseProgressMapper;
 import com.sijangmission.demo.repository.UserCourseProgressRepository;
 import com.sijangmission.demo.repository.UserMissionRepository;
 import com.sijangmission.demo.repository.UserRepository;
-import com.sijangmission.demo.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,6 @@ public class UserCourseProgressService {
 	private final UserCourseProgressMapper userCourseProgressMapper;
 	private final UserMissionRepository userMissionRepository;
 	private final UserRepository userRepository;
-	private final CourseRepository courseRepository;
     
     	public List<UserCourseProgressDto> getAllUserCourseProgresses() {
 		List<UserCourseProgress> entities = userCourseProgressRepository.findAll();
@@ -76,11 +74,6 @@ public class UserCourseProgressService {
 		} else {
 			// Create new course progress
 			UserCourseProgress progress = new UserCourseProgress();
-			// User와 Course 객체 설정 - 명시적으로 설정
-			var user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-			var course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
-			progress.setUser(user);
-			progress.setCourse(course);
 			progress.setStatus("IN_PROGRESS");
 			progress.setStartedAt(LocalDateTime.now());
 			progress.setCurrentStep(1);
@@ -107,27 +100,20 @@ public class UserCourseProgressService {
 		if (progressOpt.isPresent()) {
 			UserCourseProgress progress = progressOpt.get();
 			
-			// 코스에 포함된 모든 미션 조회
-			List<UserMission> courseMissions = userMissionRepository.findUserMissionsByUserIdAndCourseId(userId, courseId);
-			
-			// 모든 미션이 완료되었는지 확인
-			boolean allMissionsCompleted = courseMissions.stream()
-					.allMatch(userMission -> "COMPLETED".equals(userMission.getStatus()));
-			
-			if (!allMissionsCompleted) {
-				throw new RuntimeException("코스의 모든 미션을 완료해야 코스를 완료할 수 있습니다. 미완료 미션: " + 
-					courseMissions.stream()
-						.filter(um -> !"COMPLETED".equals(um.getStatus()))
-						.map(um -> um.getMission().getTitle())
-						.toList());
+			// 이미 완료된 코스인지 확인
+			if ("COMPLETED".equals(progress.getStatus())) {
+				return userCourseProgressMapper.toDto(progress);
 			}
 			
-			// 모든 미션이 완료된 경우에만 코스 완료 처리
 			progress.setStatus("COMPLETED");
 			progress.setCompletedAt(LocalDateTime.now());
 			UserCourseProgress savedEntity = userCourseProgressRepository.save(progress);
 			
-
+			// 코스 완료 시 스탬프 추가 (중복 방지)
+			userRepository.findById(userId).ifPresent(user -> {
+				user.addCompleteStamp();
+				userRepository.save(user);
+			});
 			
 			return userCourseProgressMapper.toDto(savedEntity);
 		}

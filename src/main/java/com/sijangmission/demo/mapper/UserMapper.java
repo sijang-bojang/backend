@@ -22,6 +22,10 @@ public class UserMapper {
                 .filter(userCourseProgress -> "COMPLETED".equals(userCourseProgress.getStatus()))
                 .count() : 0;
         
+        // completeStamp와 completedCourseCount의 일관성 보장
+        // completeStamp가 더 정확한 값이므로 이를 우선 사용
+        int finalCompletedCourseCount = Math.max((int) completedCourseCount, user.getCompleteStamp());
+        
         return UserDto.builder()
                 .userId(user.getUserId())
                 .username(user.getUsername())
@@ -29,7 +33,8 @@ public class UserMapper {
                 .totalReward(user.getTotalReward())
                 .exp(user.getExp())
                 .completedMissionCount((int) completedMissionCount)
-                .completedCourseCount((int) completedCourseCount)
+                .completedCourseCount(finalCompletedCourseCount)
+                .completeStamp(user.getCompleteStamp())
                 .build();
     }
 }

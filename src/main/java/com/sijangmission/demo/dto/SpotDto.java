@@ -24,5 +24,6 @@ public class SpotDto {
     private Double latitude;
     private Double longitude;
     private Integer missionCount;
+    private List<String> visitMissionTitles;
     private List<String> courseNames;
 }
