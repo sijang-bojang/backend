@@ -30,4 +30,22 @@ public interface UserMissionRepository extends JpaRepository<UserMission, Long> 
            "JOIN CourseSpot cs ON sm.spot.spotId = cs.spot.spotId " +
            "WHERE um.user.userId = :userId AND cs.course.courseId = :courseId")
     List<UserMission> findUserMissionsByUserIdAndCourseId(@Param("userId") Long userId, @Param("courseId") Long courseId);
+    
+    // JOIN FETCH로 User와 Mission 정보를 함께 로딩
+    @Query("SELECT um FROM UserMission um " +
+           "JOIN FETCH um.user " +
+           "JOIN FETCH um.mission")
+    List<UserMission> findAllWithUserAndMission();
+    
+    @Query("SELECT um FROM UserMission um " +
+           "JOIN FETCH um.user " +
+           "JOIN FETCH um.mission " +
+           "WHERE um.user.userId = :userId")
+    List<UserMission> findByUserUserIdWithUserAndMission(@Param("userId") Long userId);
+    
+    @Query("SELECT um FROM UserMission um " +
+           "JOIN FETCH um.user " +
+           "JOIN FETCH um.mission " +
+           "WHERE um.user.userId = :userId AND um.mission.missionId = :missionId")
+    Optional<UserMission> findByUserUserIdAndMissionMissionIdWithUserAndMission(@Param("userId") Long userId, @Param("missionId") Long missionId);
 }

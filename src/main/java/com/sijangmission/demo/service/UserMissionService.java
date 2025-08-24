@@ -1,7 +1,11 @@
 package com.sijangmission.demo.service;
 
 import com.sijangmission.demo.domain.relation.UserMission;
+import com.sijangmission.demo.domain.core.User;
+import com.sijangmission.demo.domain.core.Mission;
 import com.sijangmission.demo.repository.UserMissionRepository;
+import com.sijangmission.demo.repository.UserRepository;
+import com.sijangmission.demo.repository.MissionRepository;
 import com.sijangmission.demo.service.UserCourseProgressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +22,11 @@ public class UserMissionService {
     
     private final UserMissionRepository userMissionRepository;
     private final UserCourseProgressService userCourseProgressService;
+    private final UserRepository userRepository;
+    private final MissionRepository missionRepository;
     
     public List<UserMission> getAllUserMissions() {
-        return userMissionRepository.findAll();
+        return userMissionRepository.findAllWithUserAndMission();
     }
     
     public Optional<UserMission> getUserMissionById(Long userMissionId) {
@@ -28,7 +34,7 @@ public class UserMissionService {
     }
     
     public List<UserMission> getUserMissionsByUserId(Long userId) {
-        return userMissionRepository.findByUserUserId(userId);
+        return userMissionRepository.findByUserUserIdWithUserAndMission(userId);
     }
     
     public List<UserMission> getUserMissionsByUserIdAndStatus(Long userId, String status) {
@@ -36,7 +42,7 @@ public class UserMissionService {
     }
     
     public Optional<UserMission> getUserMissionByUserIdAndMissionId(Long userId, Long missionId) {
-        return userMissionRepository.findByUserUserIdAndMissionMissionId(userId, missionId);
+        return userMissionRepository.findByUserUserIdAndMissionMissionIdWithUserAndMission(userId, missionId);
     }
     
     public List<UserMission> getUserMissionsByMissionId(Long missionId) {
@@ -58,7 +64,19 @@ public class UserMissionService {
             return userMissionRepository.save(userMission);
         } else {
             // Create new user mission
+            Optional<User> userOpt = userRepository.findById(userId);
+            Optional<Mission> missionOpt = missionRepository.findById(missionId);
+            
+            if (userOpt.isEmpty()) {
+                throw new RuntimeException("User not found with id: " + userId);
+            }
+            if (missionOpt.isEmpty()) {
+                throw new RuntimeException("Mission not found with id: " + missionId);
+            }
+            
             UserMission userMission = new UserMission();
+            userMission.setUser(userOpt.get());
+            userMission.setMission(missionOpt.get());
             userMission.setStatus("IN_PROGRESS");
             userMission.setStartedAt(LocalDateTime.now());
             return userMissionRepository.save(userMission);

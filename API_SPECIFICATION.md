@@ -1,921 +1,627 @@
-# API 명세서
+# 시장미션 백엔드 API 명세서
 
-## 기본 정보
-- **Base URL**: `http://3.34.186.143:5000`
+## 📋 개요
+- **Base URL**: `http://3.34.186.143:8080`
 - **Content-Type**: `application/json`
+- **인증**: 현재 인증 없음 (모든 API 공개)
 
 ---
 
-## 1. 시장 (Market) API
+## 🏪 1. 시장 (Market) API
 
 ### 1.1 모든 시장 조회
-- **Method**: `GET`
-- **URL**: `/api/markets`
-- **Response**:
+```http
+GET /api/markets
+```
+
+**응답 예시:**
 ```json
 [
   {
     "marketId": 1,
     "name": "대전 중앙 시장",
-    "address": "대전광역시 동구 대전로 783",
+    "description": "대전의 대표 전통시장",
+    "address": "대전광역시 중구 중앙로 123",
     "latitude": 36.3308,
     "longitude": 127.4325,
-    "description": "중구에 위치하는 시장",
-    "courseCount": 2,
-    "spotCount": 9
+    "courseCount": 3,
+    "spotCount": 15
   }
 ]
 ```
 
 ### 1.2 특정 시장 조회
-- **Method**: `GET`
-- **URL**: `/api/markets/{marketId}`
-- **Response**:
-```json
-{
-  "marketId": 1,
-  "name": "대전 중앙 시장",
-  "address": "대전광역시 동구 대전로 783",
-  "latitude": 36.3308,
-  "longitude": 127.4325,
-  "description": "중구에 위치하는 시장",
-  "courseCount": 2,
-  "spotCount": 9
-}
+```http
+GET /api/markets/{marketId}
 ```
 
-### 1.3 시장 검색
-- **Method**: `GET`
-- **URL**: `/api/markets/search?name={name}&address={address}`
-- **Parameters**:
-  - `name` (optional): 시장명으로 검색
-  - `address` (optional): 주소로 검색
-- **Response**:
-```json
-[
-  {
-    "marketId": 1,
-    "name": "대전 중앙 시장",
-    "address": "대전광역시 동구 대전로 783",
-    "latitude": 36.3308,
-    "longitude": 127.4325,
-    "description": "중구에 위치하는 시장",
-    "courseCount": 2,
-    "spotCount": 9
-  }
-]
-```
+### 1.3 시장 생성
+```http
+POST /api/markets
+Content-Type: application/json
 
-### 1.4 시장 생성
-- **Method**: `POST`
-- **URL**: `/api/markets`
-- **Request Body**:
-```json
 {
-  "name": "시장명",
+  "name": "새로운 시장",
+  "description": "시장 설명",
   "address": "주소",
   "latitude": 36.3308,
-  "longitude": 127.4325,
-  "description": "설명"
-}
-```
-
-### 1.5 시장 수정
-- **Method**: `PUT`
-- **URL**: `/api/markets/{marketId}`
-- **Request Body**:
-```json
-{
-  "name": "수정된 시장명",
-  "address": "수정된 주소",
-  "latitude": 36.3308,
-  "longitude": 127.4325,
-  "description": "수정된 설명"
-}
-```
-- **Response**: 수정된 MarketDto 객체
-
-### 1.6 시장 삭제
-- **Method**: `DELETE`
-- **URL**: `/api/markets/{marketId}`
-
----
-
-## 2. 코스 (Course) API
-
-### 2.1 모든 코스 조회
-- **Method**: `GET`
-- **URL**: `/api/courses`
-- **Response**:
-```json
-[
-  {
-    "courseId": 1,
-    "marketId": 1,
-    "marketName": "대전 중앙 시장",
-    "name": "코스명",
-    "description": "코스 설명",
-    "typeNames": ["가족", "커플"],
-    "spotCount": 5,
-    "courseSpots": [...],
-    "isFamilyCourse": true,
-    "isCoupleCourse": false
-  }
-]
-```
-
-### 2.2 특정 코스 조회
-- **Method**: `GET`
-- **URL**: `/api/courses/{courseId}`
-- **Response**:
-```json
-{
-  "courseId": 1,
-  "marketId": 1,
-  "marketName": "대전 중앙 시장",
-  "name": "코스명",
-  "description": "코스 설명",
-  "typeNames": ["가족", "커플"],
-  "spotCount": 5,
-  "courseSpots": [
-    {
-      "spotId": 1,
-      "spotName": "스팟명",
-      "order": 1
-    }
-  ],
-  "isFamilyCourse": true,
-  "isCoupleCourse": false
-}
-```
-
-### 2.3 시장별 코스 조회
-- **Method**: `GET`
-- **URL**: `/api/courses/market/{marketId}`
-- **Response**:
-```json
-[
-  {
-    "courseId": 1,
-    "marketId": 1,
-    "marketName": "대전 중앙 시장",
-    "name": "코스명",
-    "description": "코스 설명",
-    "typeNames": ["가족", "커플"],
-    "spotCount": 5,
-    "courseSpots": [...],
-    "isFamilyCourse": true,
-    "isCoupleCourse": false
-  }
-]
-```
-
-### 2.4 코스 검색
-- **Method**: `GET`
-- **URL**: `/api/courses/search?name={name}&description={description}`
-- **Parameters**:
-  - `name` (optional): 코스명으로 검색
-  - `description` (optional): 설명으로 검색
-- **Response**:
-```json
-[
-  {
-    "courseId": 1,
-    "marketId": 1,
-    "marketName": "대전 중앙 시장",
-    "name": "검색된 코스명",
-    "description": "코스 설명",
-    "typeNames": ["가족", "커플"],
-    "spotCount": 5,
-    "courseSpots": [...],
-    "isFamilyCourse": true,
-    "isCoupleCourse": false
-  }
-]
-```
-
-### 2.5 코스 생성
-- **Method**: `POST`
-- **URL**: `/api/courses`
-- **Request Body**:
-```json
-{
-  "marketId": 1,
-  "name": "새로운 코스명",
-  "description": "코스 설명",
-  "isFamilyCourse": true,
-  "isCoupleCourse": false
-}
-```
-- **Response**: 생성된 CourseDto 객체
-
-### 2.6 코스 수정
-- **Method**: `PUT`
-- **URL**: `/api/courses/{courseId}`
-- **Request Body**:
-```json
-{
-  "marketId": 1,
-  "name": "수정된 코스명",
-  "description": "수정된 코스 설명",
-  "isFamilyCourse": true,
-  "isCoupleCourse": false
-}
-```
-- **Response**: 수정된 CourseDto 객체
-
-### 2.7 코스 삭제
-- **Method**: `DELETE`
-- **URL**: `/api/courses/{courseId}`
-
-### 2.8 AI 코스 추천 ⭐
-- **Method**: `POST`
-- **URL**: `/api/courses/recommend`
-- **Request Body**:
-```json
-{
-  "marketId": 1,
-  "marketName": "대전 중앙 시장",
-  "tags": ["가족", "맛집", "문화"]
-}
-```
-- **Response**:
-```json
-{
-  "courseId": 1,
-  "courseName": "추천 코스명",
-  "description": "코스 설명",
-  "marketName": "대전 중앙 시장",
-  "recommendationReason": "AI가 추천한 이유",
-  "confidenceScore": 0.85
+  "longitude": 127.4325
 }
 ```
 
 ---
 
-## 3. 사용자 코스 진행도 (UserCourseProgress) API
+## 🎯 2. 미션 (Mission) API
 
-### 3.1 모든 사용자 코스 진행도 조회
-- **Method**: `GET`
-- **URL**: `/api/user-course-progress`
-- **Response**:
-```json
-[
-  {
-    "id": 1,
-    "userId": 1,
-    "userName": "사용자명",
-    "courseId": 1,
-    "courseName": "코스명",
-    "currentStep": 3,
-    "status": "IN_PROGRESS",
-    "startedAt": "2024-01-01T10:00:00",
-    "completedAt": null,
-    "progressPercentage": 60.0
-  }
-]
+### 2.1 모든 미션 조회
+```http
+GET /api/missions
 ```
 
-### 3.2 특정 진행도 조회
-- **Method**: `GET`
-- **URL**: `/api/user-course-progress/{id}`
-
-### 3.3 사용자별 진행도 조회
-- **Method**: `GET`
-- **URL**: `/api/user-course-progress/user/{userId}`
-
-### 3.4 사용자별 상태별 진행도 조회
-- **Method**: `GET`
-- **URL**: `/api/user-course-progress/user/{userId}/status/{status}`
-- **Status Values**: `NOT_STARTED`, `IN_PROGRESS`, `COMPLETED`
-
-### 3.5 특정 사용자의 특정 코스 진행도 조회
-- **Method**: `GET`
-- **URL**: `/api/user-course-progress/user/{userId}/course/{courseId}`
-
-### 3.6 코스 시작
-- **Method**: `POST`
-- **URL**: `/api/user-course-progress/start?userId={userId}&courseId={courseId}`
-- **Parameters**:
-  - `userId`: 사용자 ID
-  - `courseId`: 코스 ID
-
-### 3.7 진행도 업데이트
-- **Method**: `PUT`
-- **URL**: `/api/user-course-progress/progress?userId={userId}&courseId={courseId}&currentStep={currentStep}`
-- **Parameters**:
-  - `userId`: 사용자 ID
-  - `courseId`: 코스 ID
-  - `currentStep`: 현재 단계 (1-5)
-
-### 3.8 코스 완료
-- **Method**: `POST`
-- **URL**: `/api/user-course-progress/complete?userId={userId}&courseId={courseId}`
-- **Parameters**:
-  - `userId`: 사용자 ID
-  - `courseId`: 코스 ID
-
-### 3.9 진행도 삭제
-- **Method**: `DELETE`
-- **URL**: `/api/user-course-progress/{id}`
-
----
-
-## 4. 사용자 미션 (UserMission) API
-
-### 4.1 모든 사용자 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/user-missions`
-- **Response**:
-```json
-[
-  {
-    "userMissionId": 1,
-    "userId": 1,
-    "missionId": 1,
-    "status": "COMPLETED",
-    "startedAt": "2024-01-01T10:00:00",
-    "completedAt": "2024-01-01T12:00:00"
-  }
-]
-```
-
-### 4.2 특정 사용자 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/user-missions/{userMissionId}`
-- **Response**:
-```json
-{
-  "userMissionId": 1,
-  "userId": 1,
-  "missionId": 1,
-  "status": "COMPLETED",
-  "startedAt": "2024-01-01T10:00:00",
-  "completedAt": "2024-01-01T12:00:00"
-}
-```
-
-### 4.3 사용자별 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/user-missions/user/{userId}`
-- **Response**:
-```json
-[
-  {
-    "userMissionId": 1,
-    "userId": 1,
-    "missionId": 1,
-    "status": "COMPLETED",
-    "startedAt": "2024-01-01T10:00:00",
-    "completedAt": "2024-01-01T12:00:00"
-  },
-  {
-    "userMissionId": 2,
-    "userId": 1,
-    "missionId": 2,
-    "status": "IN_PROGRESS",
-    "startedAt": "2024-01-01T14:00:00",
-    "completedAt": null
-  }
-]
-```
-
-### 4.4 사용자별 상태별 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/user-missions/user/{userId}/status/{status}`
-- **Status Values**: `NOT_STARTED`, `IN_PROGRESS`, `COMPLETED`
-- **Response**:
-```json
-[
-  {
-    "userMissionId": 1,
-    "userId": 1,
-    "missionId": 1,
-    "status": "COMPLETED",
-    "startedAt": "2024-01-01T10:00:00",
-    "completedAt": "2024-01-01T12:00:00"
-  }
-]
-```
-
-### 4.5 특정 사용자의 특정 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/user-missions/user/{userId}/mission/{missionId}`
-- **Response**:
-```json
-{
-  "userMissionId": 1,
-  "userId": 1,
-  "missionId": 1,
-  "status": "COMPLETED",
-  "startedAt": "2024-01-01T10:00:00",
-  "completedAt": "2024-01-01T12:00:00"
-}
-```
-
-### 4.6 미션 시작
-- **Method**: `POST`
-- **URL**: `/api/user-missions/start?userId={userId}&missionId={missionId}`
-- **Parameters**:
-  - `userId`: 사용자 ID
-  - `missionId`: 미션 ID
-- **Response**:
-```json
-{
-  "userMissionId": 1,
-  "userId": 1,
-  "missionId": 1,
-  "status": "IN_PROGRESS",
-  "startedAt": "2024-01-01T10:00:00",
-  "completedAt": null
-}
-```
-
-### 4.7 미션 완료
-- **Method**: `POST`
-- **URL**: `/api/user-missions/complete?userId={userId}&missionId={missionId}`
-- **Parameters**:
-  - `userId`: 사용자 ID
-  - `missionId`: 미션 ID
-- **Response**:
-```json
-{
-  "userMissionId": 1,
-  "userId": 1,
-  "missionId": 1,
-  "status": "COMPLETED",
-  "startedAt": "2024-01-01T10:00:00",
-  "completedAt": "2024-01-01T12:00:00"
-}
-```
-
-### 4.8 사용자 미션 삭제
-- **Method**: `DELETE`
-- **URL**: `/api/user-missions/{userMissionId}`
-
----
-
-## 5. 스팟 (Spot) API
-
-### 5.1 모든 스팟 조회
-- **Method**: `GET`
-- **URL**: `/api/spots`
-- **Response**:
-```json
-[
-  {
-    "spotId": 1,
-    "marketId": 1,
-    "marketName": "대전 중앙 시장",
-    "name": "스팟명",
-    "description": "스팟 설명",
-    "category": "맛집",
-    "latitude": 36.3308,
-    "longitude": 127.4325,
-    "imageUrl": "이미지 URL"
-  }
-]
-```
-
-### 5.2 특정 스팟 조회
-- **Method**: `GET`
-- **URL**: `/api/spots/{spotId}`
-- **Response**:
-```json
-{
-  "spotId": 1,
-  "marketId": 1,
-  "marketName": "대전 중앙 시장",
-  "name": "스팟명",
-  "description": "스팟 설명",
-  "category": "맛집",
-  "latitude": 36.3308,
-  "longitude": 127.4325,
-  "imageUrl": "이미지 URL"
-}
-```
-
-### 5.3 시장별 스팟 조회
-- **Method**: `GET`
-- **URL**: `/api/spots/market/{marketId}`
-- **Response**:
-```json
-[
-  {
-    "spotId": 1,
-    "marketId": 1,
-    "marketName": "대전 중앙 시장",
-    "name": "스팟명",
-    "description": "스팟 설명",
-    "category": "맛집",
-    "latitude": 36.3308,
-    "longitude": 127.4325,
-    "imageUrl": "이미지 URL"
-  }
-]
-```
-
-### 5.4 카테고리별 스팟 조회
-- **Method**: `GET`
-- **URL**: `/api/spots/category/{category}`
-- **Response**:
-```json
-[
-  {
-    "spotId": 1,
-    "marketId": 1,
-    "marketName": "대전 중앙 시장",
-    "name": "맛집 스팟",
-    "description": "맛집 스팟 설명",
-    "category": "맛집",
-    "latitude": 36.3308,
-    "longitude": 127.4325,
-    "imageUrl": "이미지 URL"
-  }
-]
-```
-
-### 5.5 스팟 검색
-- **Method**: `GET`
-- **URL**: `/api/spots/search?name={name}&category={category}&marketId={marketId}`
-- **Parameters**:
-  - `name` (optional): 스팟명으로 검색
-  - `category` (optional): 카테고리로 검색
-  - `marketId` (optional): 시장 ID로 검색
-- **Response**:
-```json
-[
-  {
-    "spotId": 1,
-    "marketId": 1,
-    "marketName": "대전 중앙 시장",
-    "name": "검색된 스팟명",
-    "description": "스팟 설명",
-    "category": "맛집",
-    "latitude": 36.3308,
-    "longitude": 127.4325,
-    "imageUrl": "이미지 URL"
-  }
-]
-```
-
-### 5.6 스팟 생성
-- **Method**: `POST`
-- **URL**: `/api/spots`
-- **Request Body**:
-```json
-{
-  "marketId": 1,
-  "name": "새로운 스팟명",
-  "description": "스팟 설명",
-  "category": "맛집",
-  "latitude": 36.3308,
-  "longitude": 127.4325,
-  "imageUrl": "이미지 URL"
-}
-```
-- **Response**: 생성된 SpotDto 객체
-
-### 5.7 스팟 수정
-- **Method**: `PUT`
-- **URL**: `/api/spots/{spotId}`
-- **Request Body**:
-```json
-{
-  "marketId": 1,
-  "name": "수정된 스팟명",
-  "description": "수정된 스팟 설명",
-  "category": "맛집",
-  "latitude": 36.3308,
-  "longitude": 127.4325,
-  "imageUrl": "수정된 이미지 URL"
-}
-```
-- **Response**: 수정된 SpotDto 객체
-
-### 5.8 스팟 삭제
-- **Method**: `DELETE`
-- **URL**: `/api/spots/{spotId}`
-
----
-
-## 6. 미션 (Mission) API
-
-### 6.1 모든 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/missions`
-- **Response**:
+**응답 예시:**
 ```json
 [
   {
     "missionId": 1,
-    "title": "미션 제목",
-    "description": "미션 설명",
-    "missionType": "VISIT",
+    "title": "생활의 달인 만두국 인증",
+    "description": "개천식당의 대표 메뉴, 슴슴하고 담백한 이북식 만두국을 주문하고 인증샷을 찍어보세요.",
     "rewardPoints": 100,
-    "spotId": 1,
-    "spotName": "스팟명"
-  }
-]
-```
-
-### 6.2 특정 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/missions/{missionId}`
-- **Response**:
-```json
-{
-  "missionId": 1,
-  "title": "미션 제목",
-  "description": "미션 설명",
-  "missionType": "VISIT",
-  "rewardPoints": 100,
-  "spotId": 1,
-  "spotName": "스팟명"
-}
-```
-
-### 6.3 타입별 미션 조회
-- **Method**: `GET`
-- **URL**: `/api/missions/type/{missionType}`
-- **Mission Types**: `VISIT`, `PHOTO`, `REVIEW`, `PURCHASE`
-- **Response**:
-```json
-[
-  {
-    "missionId": 1,
-    "title": "방문 미션",
-    "description": "특정 스팟을 방문하세요",
     "missionType": "VISIT",
-    "rewardPoints": 100,
-    "spotId": 1,
-    "spotName": "스팟명"
+    "spotNames": ["개천식당"],
+    "isVisitType": true,
+    "isNonVisitType": false
   }
 ]
 ```
 
-### 6.4 미션 검색
-- **Method**: `GET`
-- **URL**: `/api/missions/search?title={title}&minRewardPoints={minRewardPoints}`
-- **Parameters**:
-  - `title` (optional): 미션 제목으로 검색
-  - `minRewardPoints` (optional): 최소 보상 포인트
-- **Response**:
-```json
-[
-  {
-    "missionId": 1,
-    "title": "검색된 미션 제목",
-    "description": "미션 설명",
-    "missionType": "VISIT",
-    "rewardPoints": 150,
-    "spotId": 1,
-    "spotName": "스팟명"
-  }
-]
+### 2.2 특정 미션 조회
+```http
+GET /api/missions/{missionId}
 ```
 
-### 6.5 미션 생성
-- **Method**: `POST`
-- **URL**: `/api/missions`
-- **Request Body**:
-```json
-{
-  "title": "새로운 미션 제목",
-  "description": "미션 설명",
-  "missionType": "VISIT",
-  "rewardPoints": 100,
-  "spotId": 1
-}
+### 2.3 타입별 미션 조회
+```http
+GET /api/missions/type/{missionType}
 ```
-- **Response**: 생성된 MissionDto 객체
+- `missionType`: `VISIT`, `NON_VISIT`
 
-### 6.6 미션 수정
-- **Method**: `PUT`
-- **URL**: `/api/missions/{missionId}`
-- **Request Body**:
-```json
-{
-  "title": "수정된 미션 제목",
-  "description": "수정된 미션 설명",
-  "missionType": "VISIT",
-  "rewardPoints": 150,
-  "spotId": 1
-}
+### 2.4 미션 검색
+```http
+GET /api/missions/search?title={title}&minRewardPoints={points}
 ```
-- **Response**: 수정된 MissionDto 객체
-
-### 6.7 미션 삭제
-- **Method**: `DELETE`
-- **URL**: `/api/missions/{missionId}`
 
 ---
 
-## 7. 사용자 (User) API
+## 📍 3. 스팟 (Spot) API
 
-### 7.1 모든 사용자 조회
-- **Method**: `GET`
-- **URL**: `/api/users`
-- **Response**:
+### 3.1 모든 스팟 조회
+```http
+GET /api/spots
+```
+
+**응답 예시:**
+```json
+[
+  {
+    "spotId": 1,
+    "marketId": 1,
+    "marketName": "대전 중앙 시장",
+    "name": "개천식당",
+    "description": "전통 이북식 만두국 전문점",
+    "category": "맛집",
+    "latitude": 36.3308,
+    "longitude": 127.4325,
+    "imageUrl": "https://example.com/image.jpg",
+    "missionCount": 2,
+    "courseNames": ["맛집 탐방 코스", "전통 음식 코스"]
+  }
+]
+```
+
+### 3.2 특정 스팟 조회
+```http
+GET /api/spots/{spotId}
+```
+
+### 3.3 시장별 스팟 조회
+```http
+GET /api/spots/market/{marketId}
+```
+
+### 3.4 카테고리별 스팟 조회
+```http
+GET /api/spots/category/{category}
+```
+
+### 3.5 스팟 검색
+```http
+GET /api/spots/search?name={name}&category={category}
+```
+
+---
+
+## 🗺️ 4. 코스 (Course) API
+
+### 4.1 모든 코스 조회
+```http
+GET /api/courses
+```
+
+**응답 예시:**
+```json
+[
+  {
+    "courseId": 1,
+    "marketId": 1,
+    "marketName": "대전 중앙 시장",
+    "name": "맛집 탐방 코스",
+    "description": "대전 중앙시장의 맛집들을 둘러보는 코스",
+    "typeNames": ["맛집", "전통"],
+    "spots": [
+      {
+        "spotId": 1,
+        "spotName": "개천식당",
+        "stepNumber": 1
+      }
+    ],
+    "isFamilyCourse": false,
+    "isCoupleCourse": true
+  }
+]
+```
+
+### 4.2 특정 코스 조회
+```http
+GET /api/courses/{courseId}
+```
+
+### 4.3 시장별 코스 조회
+```http
+GET /api/courses/market/{marketId}
+```
+
+### 4.4 타입별 코스 조회
+```http
+GET /api/courses/type/{typeName}
+```
+
+---
+
+## 👤 5. 사용자 (User) API
+
+### 5.1 모든 사용자 조회
+```http
+GET /api/users
+```
+
+**응답 예시:**
 ```json
 [
   {
     "userId": 1,
-    "username": "사용자명",
-    "email": "user@example.com",
-    "rewardPoints": 500,
+    "username": "엄태은",
+    "email": "xodms3320@o.cnu.ac.kr",
+    "totalReward": 500,
     "exp": 1000,
-    "level": 5,
+    "completedMissionCount": 5,
+    "completedCourseCount": 2,
     "completeStamp": 3
   }
 ]
 ```
 
-
-### 7.2 특정 사용자 조회
-- **Method**: `GET`
-- **URL**: `/api/users/{userId}`
-- **Response**:
-```json
-{
-  "userId": 1,
-  "username": "사용자명",
-  "email": "user@example.com",
-  "rewardPoints": 500,
-  "exp": 1000,
-  "level": 5,
-  "completeStamp": 3
-}
+### 5.2 특정 사용자 조회
+```http
+GET /api/users/{userId}
 ```
 
-### 7.3 사용자명으로 사용자 조회
-- **Method**: `GET`
-- **URL**: `/api/users/username/{username}`
-- **Response**:
-```json
-{
-  "userId": 1,
-  "username": "사용자명",
-  "email": "user@example.com",
-  "rewardPoints": 500,
-  "exp": 1000,
-  "level": 5,
-  "completeStamp": 3
-}
+### 5.3 사용자명으로 조회
+```http
+GET /api/users/username/{username}
 ```
 
-### 7.4 이메일로 사용자 조회
-- **Method**: `GET`
-- **URL**: `/api/users/email/{email}`
-- **Response**:
-```json
-{
-  "userId": 1,
-  "username": "사용자명",
-  "email": "user@example.com",
-  "rewardPoints": 500,
-  "exp": 1000,
-  "level": 5,
-  "completeStamp": 3
-}
+### 5.4 이메일로 조회
+```http
+GET /api/users/email/{email}
 ```
 
-### 7.5 사용자 생성
-- **Method**: `POST`
-- **URL**: `/api/users`
-- **Request Body**:
-```json
+### 5.5 사용자 생성
+```http
+POST /api/users
+Content-Type: application/json
+
 {
   "username": "새사용자",
-  "email": "newuser@example.com",
+  "email": "user@example.com",
   "password": "password123"
 }
 ```
 
-### 7.6 사용자 수정
-- **Method**: `PUT`
-- **URL**: `/api/users/{userId}`
-- **Request Body**:
-```json
+### 5.6 사용자 수정
+```http
+PUT /api/users/{userId}
+Content-Type: application/json
+
 {
-  "username": "수정된 사용자명",
+  "username": "수정된사용자",
   "email": "updated@example.com",
   "password": "newpassword123"
 }
 ```
-- **Response**: 수정된 UserDto 객체
 
-### 7.7 사용자 보상 포인트 업데이트
-- **Method**: `PUT`
-- **URL**: `/api/users/{userId}/reward?rewardPoints={rewardPoints}`
-- **Parameters**:
-  - `rewardPoints`: 추가할 보상 포인트
-- **Response**:
-```json
+### 5.7 보상 포인트 업데이트
+```http
+PUT /api/users/{userId}/reward
+Content-Type: application/json
+
 {
-  "userId": 1,
-  "username": "사용자명",
-  "email": "user@example.com",
-  "rewardPoints": 600,
-  "exp": 1000,
-  "level": 5,
-  "completeStamp": 3
+  "totalReward": 1000
 }
 ```
 
-### 7.8 사용자 경험치 업데이트
-- **Method**: `PUT`
-- **URL**: `/api/users/{userId}/exp?exp={exp}`
-- **Parameters**:
-  - `exp`: 추가할 경험치
-- **Response**:
-```json
+### 5.8 경험치 업데이트
+```http
+PUT /api/users/{userId}/exp
+Content-Type: application/json
+
 {
-  "userId": 1,
-  "username": "사용자명",
-  "email": "user@example.com",
-  "rewardPoints": 500,
-  "exp": 1200,
-  "level": 6,
-  "completeStamp": 3
+  "exp": 1500
 }
-```
-  "level": 6
-}
-```
-
-### 7.9 사용자 스탬프 조회
-- **Method**: `GET`
-- **URL**: `/api/users/{userId}/stamps`
-- **Response**:
-```json
-{
-  "userId": 1,
-  "username": "사용자명",
-  "completeStamp": 3,
-  "completedCourseCount": 3
-}
-```
-
-### 7.10 사용자 삭제
-- **Method**: `DELETE`
-- **URL**: `/api/users/{userId}`
-
----
-
-## 상태 코드
-
-- **200**: 성공
-- **201**: 생성 성공
-- **400**: 잘못된 요청
-- **404**: 리소스를 찾을 수 없음
-- **500**: 서버 내부 오류
-
----
-
-## 주요 기능별 사용 예시
-
-### 1. AI 코스 추천
-```javascript
-// 프론트엔드에서 AI 코스 추천 요청
-const response = await fetch('http://3.34.186.143:5000/api/courses/recommend', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    marketId: 1,
-    marketName: "대전 중앙 시장",
-    tags: ["가족", "맛집", "문화"]
-  })
-});
-const recommendedCourse = await response.json();
-```
-
-### 2. 코스 진행도 업데이트
-```javascript
-// 사용자가 코스의 특정 단계를 완료했을 때
-const response = await fetch('http://3.34.186.143:5000/api/user-course-progress/progress?userId=1&courseId=1&currentStep=3', {
-  method: 'PUT'
-});
-const updatedProgress = await response.json();
-```
-
-### 3. 미션 완료
-```javascript
-// 사용자가 미션을 완료했을 때
-const response = await fetch('http://3.34.186.143:5000/api/user-missions/complete?userId=1&missionId=1', {
-  method: 'POST'
-});
-const completedMission = await response.json();
 ```
 
 ---
 
-## 주의사항
+## 🎯 6. 사용자 미션 (UserMission) API
 
-1. **Base URL**: 모든 API 호출 시 `http://3.34.186.143:5000`을 기본 URL로 사용
-2. **Content-Type**: 모든 POST/PUT 요청 시 `application/json` 헤더 포함
-3. **에러 처리**: 400, 404, 500 상태 코드에 대한 적절한 에러 처리 필요
-4. **AI 추천**: 코스 추천 API는 OpenAI API를 사용하므로 응답 시간이 다소 걸릴 수 있음
-5. **진행도 계산**: `progressPercentage`는 자동으로 계산되어 제공됨 (1-5단계 기준)
+### 6.1 모든 사용자 미션 조회
+```http
+GET /api/user-missions
+```
+
+**응답 예시:**
+```json
+[
+  {
+    "userMissionId": 1,
+    "userId": 1,
+    "userName": "엄태은",
+    "missionId": 1,
+    "missionTitle": "생활의 달인 만두국 인증",
+    "status": "IN_PROGRESS",
+    "startedAt": "2025-08-24T04:58:50.27409",
+    "completedAt": null,
+    "completed": false,
+    "inProgress": true
+  }
+]
+```
+
+### 6.2 특정 사용자 미션 조회
+```http
+GET /api/user-missions/{userMissionId}
+```
+
+### 6.3 사용자별 미션 조회
+```http
+GET /api/user-missions/user/{userId}
+```
+
+### 6.4 사용자별 상태별 미션 조회
+```http
+GET /api/user-missions/user/{userId}/status/{status}
+```
+- `status`: `NOT_STARTED`, `IN_PROGRESS`, `COMPLETED`
+
+### 6.5 특정 사용자의 특정 미션 조회
+```http
+GET /api/user-missions/user/{userId}/mission/{missionId}
+```
+
+### 6.6 미션 시작 ⭐
+```http
+POST /api/user-missions/start?userId={userId}&missionId={missionId}
+```
+
+**응답 예시:**
+```json
+{
+  "userMissionId": 1,
+  "userId": 1,
+  "userName": "엄태은",
+  "missionId": 1,
+  "missionTitle": "생활의 달인 만두국 인증",
+  "status": "IN_PROGRESS",
+  "startedAt": "2025-08-24T04:58:50.27409",
+  "completedAt": null,
+  "completed": false,
+  "inProgress": true
+}
+```
+
+### 6.7 미션 완료 ⭐
+```http
+POST /api/user-missions/complete?userId={userId}&missionId={missionId}
+```
+
+**응답 예시:**
+```json
+{
+  "userMissionId": 1,
+  "userId": 1,
+  "userName": "엄태은",
+  "missionId": 1,
+  "missionTitle": "생활의 달인 만두국 인증",
+  "status": "COMPLETED",
+  "startedAt": "2025-08-24T04:58:50.27409",
+  "completedAt": "2025-08-24T05:06:45.215272825",
+  "completed": true,
+  "inProgress": false
+}
+```
+
+---
+
+## 📚 7. 사용자 코스 진행도 (UserCourseProgress) API
+
+### 7.1 모든 코스 진행도 조회
+```http
+GET /api/user-course-progress
+```
+
+**응답 예시:**
+```json
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "courseId": 1,
+    "courseName": "맛집 탐방 코스",
+    "status": "IN_PROGRESS",
+    "currentStep": 2,
+    "totalSteps": 5,
+    "progressPercentage": 40.0,
+    "startedAt": "2025-08-24T04:00:00",
+    "completedAt": null
+  }
+]
+```
+
+### 7.2 사용자별 코스 진행도 조회
+```http
+GET /api/user-course-progress/user/{userId}
+```
+
+### 7.3 사용자별 상태별 코스 진행도 조회
+```http
+GET /api/user-course-progress/user/{userId}/status/{status}
+```
+
+### 7.4 특정 사용자의 특정 코스 진행도 조회
+```http
+GET /api/user-course-progress/user/{userId}/course/{courseId}
+```
+
+### 7.5 코스 시작 ⭐
+```http
+POST /api/user-course-progress/start?userId={userId}&courseId={courseId}
+```
+
+### 7.6 진행도 업데이트 ⭐
+```http
+PUT /api/user-course-progress/progress?userId={userId}&courseId={courseId}&currentStep={currentStep}
+```
+
+### 7.7 코스 완료 ⭐
+```http
+POST /api/user-course-progress/complete?userId={userId}&courseId={courseId}
+```
+
+---
+
+## 🏪 8. 스팟-미션 연결 (SpotMission) API
+
+### 8.1 스팟에 연결된 모든 미션 조회
+```http
+GET /api/spots/{spotId}/missions
+```
+
+**응답 예시:**
+```json
+[
+  {
+    "missionId": 1,
+    "title": "생활의 달인 만두국 인증",
+    "description": "개천식당의 대표 메뉴, 슴슴하고 담백한 이북식 만두국을 주문하고 인증샷을 찍어보세요.",
+    "missionType": "VISIT",
+    "rewardPoints": 100,
+    "spotId": 1,
+    "spotName": "개천식당"
+  }
+]
+```
+
+### 8.2 스팟에 연결된 VISIT 타입 미션만 조회
+```http
+GET /api/spots/{spotId}/missions/visit
+```
+
+### 8.3 특정 스팟의 특정 미션 연결 조회
+```http
+GET /api/spots/{spotId}/missions/{missionId}
+```
+
+### 8.4 스팟에 미션 연결
+```http
+POST /api/spots/{spotId}/missions/{missionId}
+```
+
+### 8.5 스팟에 VISIT 타입 미션 연결
+```http
+POST /api/spots/{spotId}/missions/{missionId}/visit
+```
+
+### 8.6 스팟-미션 연결 해제
+```http
+DELETE /api/spots/{spotId}/missions/{missionId}
+```
+
+### 8.7 스팟에 연결된 미션 개수 조회
+```http
+GET /api/spots/{spotId}/missions/count
+```
+
+### 8.8 스팟에 연결된 VISIT 타입 미션 개수 조회
+```http
+GET /api/spots/{spotId}/missions/visit/count
+```
+
+---
+
+## 🖼️ 9. 이미지 (Image) API
+
+### 9.1 모든 이미지 조회
+```http
+GET /api/images
+```
+
+**응답 예시:**
+```json
+[
+  {
+    "imageId": 1,
+    "imageUrl": "https://sijang-bojang.s3.ap-southeast-2.amazonaws.com/.../감자바위골.jpeg"
+  }
+]
+```
+
+### 9.2 특정 이미지 조회
+```http
+GET /api/images/{imageId}
+```
+
+### 9.3 이미지 생성
+```http
+POST /api/images
+Content-Type: application/json
+
+{
+  "imageUrl": "https://example.com/new-image.jpg"
+}
+```
+
+### 9.4 이미지 수정
+```http
+PUT /api/images/{imageId}
+Content-Type: application/json
+
+{
+  "imageUrl": "https://example.com/updated-image.jpg"
+}
+```
+
+### 9.5 이미지 삭제
+```http
+DELETE /api/images/{imageId}
+```
+
+---
+
+## 🤖 10. AI 코스 추천 API
+
+### 10.1 AI 코스 추천
+```http
+POST /api/courses/recommend
+Content-Type: application/json
+
+{
+  "keywords": ["맛집", "카페", "전통"],
+  "preferences": "가족과 함께 방문할 수 있는 곳을 찾고 있어요",
+  "maxDuration": 120
+}
+```
+
+**응답 예시:**
+```json
+{
+  "recommendedCourses": [
+    {
+      "courseId": 1,
+      "courseName": "맛집 탐방 코스",
+      "description": "대전 중앙시장의 맛집들을 둘러보는 코스",
+      "reason": "키워드 '맛집'과 '전통'에 부합하는 코스입니다.",
+      "estimatedDuration": 90,
+      "spots": [
+        {
+          "spotId": 1,
+          "spotName": "개천식당",
+          "category": "맛집"
+        }
+      ]
+    }
+  ],
+  "totalRecommendations": 1
+}
+```
+
+---
+
+## 📊 11. 상태 코드
+
+### 성공 응답
+- `200 OK`: 요청 성공
+- `201 Created`: 리소스 생성 성공
+
+### 클라이언트 에러
+- `400 Bad Request`: 잘못된 요청
+- `404 Not Found`: 리소스를 찾을 수 없음
+
+### 서버 에러
+- `500 Internal Server Error`: 서버 내부 오류
+
+---
+
+## 🔧 12. 에러 응답 형식
+
+```json
+{
+  "timestamp": "2025-08-24T05:06:45.215+00:00",
+  "status": 404,
+  "error": "Not Found",
+  "path": "/api/users/999"
+}
+```
+
+---
+
+## 📝 13. 주요 비즈니스 로직
+
+### 13.1 미션 완료 시 자동 처리
+- 미션 완료 시 해당 미션이 속한 코스들의 완료 상태 자동 체크
+- 모든 미션이 완료되면 코스도 자동 완료 처리
+
+### 13.2 스탬프 시스템
+- 코스 완료 시 사용자의 `completeStamp` 자동 증가
+- `completeStamp`는 완료한 코스의 개수를 나타냄
+
+### 13.3 진행률 계산
+- 코스 진행률 = (현재 단계 / 전체 단계) × 100
+- 단계는 1부터 시작
+
+---
+
+## 🚀 14. 배포 정보
+
+- **서버**: AWS EC2 (3.34.186.143:8080)
+- **데이터베이스**: MySQL (Docker)
+- **프레임워크**: Spring Boot 3.x
+- **Java 버전**: 17
+
+---
+
+## 📞 15. 문의사항
+
+API 사용 중 문제가 발생하면 백엔드 개발팀에 문의해주세요.
+
+---
+
+**마지막 업데이트**: 2025-08-24
