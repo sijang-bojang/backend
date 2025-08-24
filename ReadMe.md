@@ -11,8 +11,8 @@ JPA 기반의 Spring Boot 애플리케이션으로, 시장 탐방과 미션 수�
 - **배포 플랫폼**: AWS EC2 (Docker)
 - **데이터베이스**: EC2 내부 MySQL
 - **포트**: 5000
-- **URL**: `http://3.34.186.143:5000`
-- **API 엔드포인트**: `http://3.34.186.143:5000/api/...`
+- **URL**: `http://3.34.186.143:8080`
+- **API 엔드포인트**: `http://3.34.186.143:8080/api/...`
 
 ## 📋 배포 과정 (완료됨)
 
@@ -149,7 +149,7 @@ sudo mysql -u user -p'MyPassword123!' sijang1
 UPDATE markets SET name = '새로운 이름' WHERE market_id = 1;
 ```
 
-## 🚀 자동화 배포 스크립트
+
 
 ### deploy.sh 생성 (선택사항)
 ```bash
@@ -223,7 +223,7 @@ SERVER_PORT=5000
 
 ## 📊 현재 상태
 
-- ✅ **API 서버**: `http://3.34.186.143:5000`에서 정상 실행
+- ✅ **API 서버**: `http://3.34.186.143:8080`에서 정상 실행
 - ✅ **데이터베이스**: EC2 MySQL의 `sijang1` DB 사용
 - ✅ **데이터**: 로컬 백업 데이터 완전 복원
 - ✅ **외부 접근**: 프론트엔드에서 API 호출 가능
@@ -492,6 +492,25 @@ src/main/java/com/sijangmission/demo/
 - `PUT /api/markets/{marketId}` - 시장 수정 (MarketDto 반환)
 - `DELETE /api/markets/{marketId}` - 시장 삭제
 
+### Missions
+- `GET /api/missions` - 모든 미션 조회 (MissionDto 반환)
+- `GET /api/missions/{missionId}` - 특정 미션 조회 (MissionDto 반환)
+- `GET /api/missions/type/{missionType}` - 타입별 미션 조회 (MissionDto 리스트 반환)
+- `GET /api/missions/search` - 미션 검색 (MissionDto 리스트 반환)
+- `POST /api/missions` - 미션 생성 (MissionDto 반환)
+- `PUT /api/missions/{missionId}` - 미션 수정 (MissionDto 반환)
+- `DELETE /api/missions/{missionId}` - 미션 삭제
+
+### Spots
+- `GET /api/spots` - 모든 스팟 조회 (SpotDto 반환)
+- `GET /api/spots/{spotId}` - 특정 스팟 조회 (SpotDto 반환)
+- `GET /api/spots/market/{marketId}` - 시장별 스팟 조회 (SpotDto 리스트 반환)
+- `GET /api/spots/category/{category}` - 카테고리별 스팟 조회 (SpotDto 리스트 반환)
+- `GET /api/spots/search` - 스팟 검색 (SpotDto 리스트 반환)
+- `POST /api/spots` - 스팟 생성 (SpotDto 반환)
+- `PUT /api/spots/{spotId}` - 스팟 수정 (SpotDto 반환)
+- `DELETE /api/spots/{spotId}` - 스팟 삭제
+
 ### Courses
 - `GET /api/courses` - 모든 코스 조회 (CourseDto 반환)
 - `GET /api/courses/{courseId}` - 특정 코스 조회 (CourseDto 반환)
@@ -514,38 +533,45 @@ src/main/java/com/sijangmission/demo/
 - `PUT /api/users/{userId}/exp` - 경험치 업데이트 (UserDto 반환)
 - `DELETE /api/users/{userId}` - 사용자 삭제
 
-### Missions
-- `GET /api/missions` - 모든 미션 조회 (MissionDto 반환)
-- `GET /api/missions/{missionId}` - 특정 미션 조회 (MissionDto 반환)
-- `GET /api/missions/type/{missionType}` - 타입별 미션 조회 (MissionDto 리스트 반환)
-- `GET /api/missions/search` - 미션 검색 (MissionDto 리스트 반환)
-- `POST /api/missions` - 미션 생성 (MissionDto 반환)
-- `PUT /api/missions/{missionId}` - 미션 수정 (MissionDto 반환)
-- `DELETE /api/missions/{missionId}` - 미션 삭제
-
-### Spots
-- `GET /api/spots` - 모든 스팟 조회 (SpotDto 반환)
-- `GET /api/spots/{spotId}` - 특정 스팟 조회 (SpotDto 반환)
-- `GET /api/spots/market/{marketId}` - 시장별 스팟 조회 (SpotDto 리스트 반환)
-- `GET /api/spots/category/{category}` - 카테고리별 스팟 조회 (SpotDto 리스트 반환)
-- `GET /api/spots/search` - 스팟 검색 (SpotDto 리스트 반환)
-- `POST /api/spots` - 스팟 생성 (SpotDto 반환)
-- `PUT /api/spots/{spotId}` - 스팟 수정 (SpotDto 반환)
-- `DELETE /api/spots/{spotId}` - 스팟 삭제
-
 ### User Missions
 - `GET /api/user-missions` - 모든 사용자 미션 조회 (UserMissionDto 반환)
+- `GET /api/user-missions/{userMissionId}` - 특정 사용자 미션 조회 (UserMissionDto 반환)
 - `GET /api/user-missions/user/{userId}` - 사용자별 미션 조회 (UserMissionDto 리스트 반환)
 - `GET /api/user-missions/user/{userId}/status/{status}` - 상태별 미션 조회 (UserMissionDto 리스트 반환)
+- `GET /api/user-missions/user/{userId}/mission/{missionId}` - 특정 사용자의 특정 미션 조회 (UserMissionDto 반환)
+- `POST /api/user-missions` - 사용자 미션 생성 (UserMissionDto 반환)
 - `POST /api/user-missions/start` - 미션 시작 (UserMissionDto 반환)
 - `POST /api/user-missions/complete` - 미션 완료 (UserMissionDto 반환)
+- `DELETE /api/user-missions/{userMissionId}` - 사용자 미션 삭제
 
 ### User Course Progress
 - `GET /api/user-course-progress` - 모든 코스 진행 상황 조회 (UserCourseProgressDto 반환)
+- `GET /api/user-course-progress/{id}` - 특정 코스 진행 상황 조회 (UserCourseProgressDto 반환)
 - `GET /api/user-course-progress/user/{userId}` - 사용자별 코스 진행 상황 (UserCourseProgressDto 리스트 반환)
+- `GET /api/user-course-progress/user/{userId}/status/{status}` - 사용자별 상태별 코스 진행 상황 (UserCourseProgressDto 리스트 반환)
+- `GET /api/user-course-progress/user/{userId}/course/{courseId}` - 특정 사용자의 특정 코스 진행 상황 (UserCourseProgressDto 반환)
+- `POST /api/user-course-progress` - 코스 진행 상황 생성 (UserCourseProgressDto 반환)
 - `POST /api/user-course-progress/start` - 코스 시작 (UserCourseProgressDto 반환)
 - `PUT /api/user-course-progress/progress` - 코스 진행 단계 업데이트 (UserCourseProgressDto 반환)
 - `POST /api/user-course-progress/complete` - 코스 완료 (UserCourseProgressDto 반환)
+- `DELETE /api/user-course-progress/{id}` - 코스 진행 상황 삭제
+
+### Spot Missions
+- `GET /api/spots/{spotId}/missions` - 스팟에 연결된 모든 미션 조회 (MissionDto 리스트 반환)
+- `GET /api/spots/{spotId}/missions/visit` - 스팟에 연결된 VISIT 타입 미션 조회 (MissionDto 리스트 반환)
+- `GET /api/spots/{spotId}/missions/{missionId}` - 특정 스팟의 특정 미션 연결 조회 (SpotMissionDto 반환)
+- `GET /api/spots/{spotId}/missions/count` - 스팟에 연결된 미션 개수 조회 (Long 반환)
+- `GET /api/spots/{spotId}/missions/visit/count` - 스팟에 연결된 VISIT 타입 미션 개수 조회 (Long 반환)
+- `POST /api/spots/{spotId}/missions/{missionId}` - 스팟에 미션 연결 (SpotMissionDto 반환)
+- `POST /api/spots/{spotId}/missions/{missionId}/visit` - 스팟에 VISIT 타입 미션 연결 (SpotMissionDto 반환)
+- `DELETE /api/spots/{spotId}/missions/{missionId}` - 스팟-미션 연결 해제
+
+### Images
+- `GET /api/images` - 모든 이미지 조회 (ImageDto 반환)
+- `GET /api/images/{imageId}` - 특정 이미지 조회 (ImageDto 반환)
+- `POST /api/images` - 이미지 생성 (ImageDto 반환)
+- `PUT /api/images/{imageId}` - 이미지 수정 (ImageDto 반환)
+- `DELETE /api/images/{imageId}` - 이미지 삭제
 
 ## 🛠️ 기술 스택
 
@@ -557,31 +583,8 @@ src/main/java/com/sijangmission/demo/
 - **Lombok**: 코드 간소화
 - **Architecture**: DTO 패턴, 계층형 아키텍처
 - **AI Integration**: OpenAI API (GPT-3.5-turbo)
-- **Deployment**: AWS Elastic Beanstalk
-- **Cloud Database**: AWS RDS MySQL
-
-## ⚙️ 환경 설정
-
-### 로컬 개발 환경
-```properties
-# application.properties
-spring.datasource.url=jdbc:mysql://localhost:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
-spring.datasource.username=root
-spring.datasource.password=password
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.defer-datasource-initialization=true
-server.port=8080
-```
-
-### AWS 배포 환경
-```properties
-# 환경 변수 설정
-JDBC_CONNECTION_STRING=jdbc:mysql://database-sijang.ctcy86co8m0x.ap-northeast-2.rds.amazonaws.com:3306/sijang1?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=utf8
-DB_USERNAME=admin
-DB_PASSWORD=mydb1234
-SERVER_PORT=5000
-OPENAI_API_KEY=your-openai-api-key-here
-```
+- **Deployment**: AWS 
+- **Cloud Database**: MySQL
 
 ## 📊 데이터 구조
 
