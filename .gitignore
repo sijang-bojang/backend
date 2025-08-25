@@ -1,11 +1,77 @@
 HELP.md
 .gradle
 build/
+.ebextensions/build_timeout.config
+Dockerfile
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 src/main/resources/application.properties
 src/main/resources/application.yml
+
+# Docker 이미지 파일들 (GitHub 100MB 제한)
+*.tar
+sijang-backend*.tar
+sijang-backend-amd64.tar
+
+# 로그 파일들
+*.log
+logs/
+log/
+
+# 임시 파일들
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# 백업 파일들
+*.bak
+*.backup
+*.old
+*.orig
+
+# 데이터베이스 백업 파일들 (sql_script 폴더 제외)
+*.dump
+*.backup
+sijang1_backup.sql
+!src/main/resources/sql_script/*.sql
+
+# 환경 설정 파일들 (개인별로 다름)
+.env
+.env.local
+.env.development
+.env.production
+application-local.properties
+application-local.yml
+
+# 키 파일들
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 캐시 파일들
+.cache/
+cache/
+*.cache
+
+# 임시 디렉토리들
+temp/
+tmp/
+.tmp/
+
+# IDE 설정 파일들 (개인별로 다름)
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
 ### STS ###
 .apt_generated
 .classpath
@@ -36,3 +102,30 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# OS 생성 파일들
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 압축 파일들
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar.bz2
+
+# 실행 파일들
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 문서 임시 파일들
+~$*.docx
+~$*.xlsx
+~$*.pptx
